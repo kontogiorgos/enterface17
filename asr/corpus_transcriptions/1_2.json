@@ -1,0 +1,849 @@
+  {
+   "results": [
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "yeah "
+            }, 
+            {
+               "transcript": "you "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "right "
+            }, 
+            {
+               "transcript": "so "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "well", 
+                     14.56, 
+                     14.73
+                  ], 
+                  [
+                     "maybe", 
+                     14.73, 
+                     15.02
+                  ], 
+                  [
+                     "she", 
+                     15.02, 
+                     15.25
+                  ], 
+                  [
+                     "assessed", 
+                     15.25, 
+                     15.62
+                  ], 
+                  [
+                     "Plateosaurus", 
+                     15.62, 
+                     16.46
+                  ], 
+                  [
+                     "approves", 
+                     16.46, 
+                     16.91
+                  ]
+               ], 
+               "confidence": 0.19, 
+               "transcript": "well maybe she assessed Plateosaurus approves "
+            }, 
+            {
+               "transcript": "%HESITATION maybe Cissus Plateosaurus approves "
+            }, 
+            {
+               "transcript": "%HESITATION maybe she assessed Plateosaurus approves "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "sucks", 
+                     18.87, 
+                     19.28
+                  ], 
+                  [
+                     "through", 
+                     19.33, 
+                     19.63
+                  ], 
+                  [
+                     "so", 
+                     19.63, 
+                     19.94
+                  ], 
+                  [
+                     "that", 
+                     19.94, 
+                     20.13
+                  ], 
+                  [
+                     "she", 
+                     20.13, 
+                     20.35
+                  ], 
+                  [
+                     "snapped", 
+                     20.35, 
+                     20.74
+                  ], 
+                  [
+                     "by", 
+                     20.74, 
+                     20.92
+                  ], 
+                  [
+                     "rote", 
+                     20.92, 
+                     21.19
+                  ]
+               ], 
+               "confidence": 0.467, 
+               "transcript": "sucks through so that she snapped by rote "
+            }, 
+            {
+               "transcript": "sucks through so that she snapped by low "
+            }, 
+            {
+               "transcript": "sucks through so that she snuck by rote "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "but "
+            }, 
+            {
+               "transcript": "what "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "yeah", 
+                     30.34, 
+                     30.66
+                  ], 
+                  [
+                     "thanks", 
+                     30.66, 
+                     30.93
+                  ]
+               ], 
+               "confidence": 0.682, 
+               "transcript": "yeah thanks "
+            }, 
+            {
+               "transcript": "yeah "
+            }, 
+            {
+               "transcript": "yeah I think so "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "well "
+            }, 
+            {
+               "transcript": "open "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "so", 
+                     97.75, 
+                     98.05
+                  ], 
+                  [
+                     "young", 
+                     98.05, 
+                     98.31
+                  ], 
+                  [
+                     "contest", 
+                     98.31, 
+                     98.72
+                  ]
+               ], 
+               "confidence": 0.486, 
+               "transcript": "so young contest "
+            }, 
+            {
+               "transcript": "so young penthouse "
+            }, 
+            {
+               "transcript": "so you're in penthouse "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "I", 
+                     99.06, 
+                     99.09
+                  ], 
+                  [
+                     "think", 
+                     99.09, 
+                     99.29
+                  ], 
+                  [
+                     "Sophia", 
+                     99.29, 
+                     99.84
+                  ]
+               ], 
+               "confidence": 0.866, 
+               "transcript": "I think Sophia "
+            }, 
+            {
+               "transcript": "I think Sofia "
+            }, 
+            {
+               "transcript": "for think Sofia "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "fellas", 
+                     100.08, 
+                     100.78
+                  ]
+               ], 
+               "confidence": 0.161, 
+               "transcript": "fellas "
+            }, 
+            {
+               "transcript": "fellows "
+            }, 
+            {
+               "transcript": "fellow was "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "no", 
+                     117.84, 
+                     118.27
+                  ], 
+                  [
+                     "because", 
+                     118.38, 
+                     118.72
+                  ], 
+                  [
+                     "you're", 
+                     118.72, 
+                     118.89
+                  ], 
+                  [
+                     "both", 
+                     118.89, 
+                     119.09
+                  ], 
+                  [
+                     "fun", 
+                     119.09, 
+                     119.46
+                  ], 
+                  [
+                     "speaking", 
+                     119.49, 
+                     120.35
+                  ]
+               ], 
+               "confidence": 0.76, 
+               "transcript": "no because you're both fun speaking "
+            }, 
+            {
+               "transcript": "no because you know it's fun speaking "
+            }, 
+            {
+               "transcript": "no because you're a fun speaking "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "like", 
+                     120.55, 
+                     121.08
+                  ]
+               ], 
+               "confidence": 0.344, 
+               "transcript": "like "
+            }, 
+            {
+               "transcript": "Mike "
+            }, 
+            {
+               "transcript": "my "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "who", 
+                     121.43, 
+                     121.59
+                  ], 
+                  [
+                     "we", 
+                     121.59, 
+                     122.19
+                  ], 
+                  [
+                     "envelope", 
+                     122.34, 
+                     122.86
+                  ]
+               ], 
+               "confidence": 0.609, 
+               "transcript": "who we envelope "
+            }, 
+            {
+               "transcript": "who we hung over one "
+            }, 
+            {
+               "transcript": "who we convert one "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "but", 
+                     135.13, 
+                     135.35
+                  ], 
+                  [
+                     "I'm", 
+                     135.35, 
+                     135.59
+                  ], 
+                  [
+                     "determined", 
+                     135.59, 
+                     136.26
+                  ]
+               ], 
+               "confidence": 0.315, 
+               "transcript": "but I'm determined "
+            }, 
+            {
+               "transcript": "but I'm dead "
+            }, 
+            {
+               "transcript": "but then the Daytona "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "yeah", 
+                     137.81, 
+                     138.29
+                  ]
+               ], 
+               "confidence": 0.365, 
+               "transcript": "yeah "
+            }, 
+            {
+               "transcript": "he has "
+            }, 
+            {
+               "transcript": "he had "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "what "
+            }, 
+            {
+               "transcript": "the "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "the "
+            }, 
+            {
+               "transcript": "but "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "yeah", 
+                     142.7, 
+                     143.02
+                  ]
+               ], 
+               "confidence": 0.91, 
+               "transcript": "yeah "
+            }, 
+            {
+               "transcript": "yeah yeah "
+            }, 
+            {
+               "transcript": "yeah I "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "so", 
+                     157.19, 
+                     157.54
+                  ], 
+                  [
+                     "that", 
+                     157.54, 
+                     157.75
+                  ], 
+                  [
+                     "has", 
+                     157.75, 
+                     157.95
+                  ], 
+                  [
+                     "the", 
+                     157.95, 
+                     158.05
+                  ], 
+                  [
+                     "Vera", 
+                     158.05, 
+                     158.57
+                  ]
+               ], 
+               "confidence": 0.669, 
+               "transcript": "so that has the Vera "
+            }, 
+            {
+               "transcript": "so that has the fear of "
+            }, 
+            {
+               "transcript": "so that has the appearance "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "but", 
+                     203.48, 
+                     203.65
+                  ], 
+                  [
+                     "if", 
+                     203.65, 
+                     203.79
+                  ], 
+                  [
+                     "I'm", 
+                     203.79, 
+                     203.95
+                  ], 
+                  [
+                     "the", 
+                     203.95, 
+                     204.06
+                  ], 
+                  [
+                     "only", 
+                     204.06, 
+                     204.29
+                  ], 
+                  [
+                     "one", 
+                     204.29, 
+                     204.42
+                  ]
+               ], 
+               "confidence": 0.723, 
+               "transcript": "but if I'm the only one "
+            }, 
+            {
+               "transcript": "but they found only one "
+            }, 
+            {
+               "transcript": "I am but if I'm the only one "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "so", 
+                     204.84, 
+                     204.98
+                  ], 
+                  [
+                     "it's", 
+                     204.98, 
+                     205.31
+                  ]
+               ], 
+               "confidence": 0.326, 
+               "transcript": "so it's "
+            }, 
+            {
+               "transcript": "what's "
+            }, 
+            {
+               "transcript": "so what's "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "he", 
+                     234.46, 
+                     234.61
+                  ]
+               ], 
+               "confidence": 0.333, 
+               "transcript": "he "
+            }, 
+            {
+               "transcript": "you "
+            }, 
+            {
+               "transcript": "his "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "so", 
+                     235.26, 
+                     235.51
+                  ], 
+                  [
+                     "I", 
+                     235.51, 
+                     235.65
+                  ], 
+                  [
+                     "can", 
+                     235.65, 
+                     236.02
+                  ]
+               ], 
+               "confidence": 1.0, 
+               "transcript": "so I can "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "both", 
+                     236.57, 
+                     237.0
+                  ]
+               ], 
+               "confidence": 0.637, 
+               "transcript": "both "
+            }, 
+            {
+               "transcript": "both of "
+            }, 
+            {
+               "transcript": "vote "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "yeah", 
+                     238.63, 
+                     239.02
+                  ], 
+                  [
+                     "I", 
+                     239.02, 
+                     239.26
+                  ]
+               ], 
+               "confidence": 0.608, 
+               "transcript": "yeah I "
+            }, 
+            {
+               "transcript": "I yeah I "
+            }, 
+            {
+               "transcript": "yeah "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "with "
+            }, 
+            {
+               "transcript": "I "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "but "
+            }, 
+            {
+               "transcript": "put "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "I "
+            }, 
+            {
+               "transcript": "yeah "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "what "
+            }, 
+            {
+               "transcript": "it "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "what "
+            }, 
+            {
+               "transcript": "the "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "yeah "
+            }, 
+            {
+               "transcript": "he "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "yeah "
+            }, 
+            {
+               "transcript": "we "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "but "
+            }, 
+            {
+               "transcript": "it's "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "if "
+            }, 
+            {
+               "transcript": "it's "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [
+                  [
+                     "even", 
+                     688.28, 
+                     688.48
+                  ], 
+                  [
+                     "if", 
+                     688.48, 
+                     688.68
+                  ], 
+                  [
+                     "it's", 
+                     688.68, 
+                     688.83
+                  ]
+               ], 
+               "confidence": 0.145, 
+               "transcript": "even if it's "
+            }, 
+            {
+               "transcript": "you know if it's "
+            }, 
+            {
+               "transcript": "I think this "
+            }
+         ], 
+         "final": true
+      }, 
+      {
+         "alternatives": [
+            {
+               "timestamps": [], 
+               "confidence": 0.0, 
+               "transcript": "I "
+            }
+         ], 
+         "final": true
+      }
+   ], 
+   "result_index": 0
+}
