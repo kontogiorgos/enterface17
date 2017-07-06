@@ -1,5 +1,5 @@
-#Installation
-###Virtualenv (suggestion)
+# Installation
+### Virtualenv (suggestion)
 I suggest you install a virtual environment
 
 ```pip install virtualenv```
@@ -12,7 +12,7 @@ and enter into your virtual environment
 
 ```source env/bin/activate```
 
-###Installing the dependencis
+### Installing the dependencis
 then install the dependencies:
 
 ```pip install -r requirements.txt```
@@ -24,7 +24,7 @@ by going the directory of the furhat-client and typing (note that you have to be
 ```python setup.py install```
 
 
-#Running
+# Running
 
 ```python main.py```
 
