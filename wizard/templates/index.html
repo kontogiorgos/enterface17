@@ -1,104 +1,48 @@
-<html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-        <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    </head>
-    <body>
-        <nav class="navbar navbar-inverse">
-          <div class="container-fluid">
-
-              <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Wizard</a>
-              </div>
-              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                  <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                  <li><a href="#">Link</a></li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                      <li><a href="#">Action</a></li>
-                      <li><a href="#">Another action</a></li>
-                      <li><a href="#">Something else here</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="#">Separated link</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="#">One more separated link</a></li>
-                    </ul>
-                  </li>
-                </ul>
-
-                <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#">Link</a></li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                      <li><a href="#">Action</a></li>
-                      <li><a href="#">Another action</a></li>
-                      <li><a href="#">Something else here</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="#">Separated link</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </div><!-- /.navbar-collapse -->
-            </div>
-        </nav>
-        <div class="container" style="margin-top:50px; width: 100%">
-            <div class="row">
-                <div class="col-xs-3 col-xs-offset-5">
-                    <div class="btn-group" role="group" id="naver" style="margin-left: auto; margin-right: auto;">
-                        <button type="button" class="btn btn-primary">Some topic</button>
-                        <button type="button" class="btn btn-default">Some topic</button>
-                        <button type="button" class="btn btn-default">Some topic</button>
-                    </div>
-                </div>
-            </div>
-            <div class="row" id="commands" style="margin-top: 20px;">
-                <div class="col-xs-12">
-                    <div class="col-xs-2">
-                        <ul class="list-group" id="timeline">
-                            <li class="list-group-item" style="font-weight: bold">General</li>
-                            <li class="list-group-item">Hello <span class="badge">Q</span></li>
-                            <li class="list-group-item">Goodbye <span class="badge">W</span></li>
-                        </ul>
-                    </div>
-                    <div class="col-xs-2">
-                        <ul class="list-group" id="encouragement">
-                            <li class="list-group-item" style="font-weight: bold">Encouragement</li>
-                        </ul>
-                    </div>
-                    <div class="col-xs-2">
-                        <ul class="list-group" id="refocusing">
-                            <li class="list-group-item" style="font-weight: bold">Refocusing</li>
-                        </ul>
-                    </div>
-                    <div class="col-xs-2">
-                        <ul class="list-group" id="sidelines">
-                            <li class="list-group-item" style="font-weight: bold">Sidelines</li>
-                        </ul>
-                    </div>                    <div class="col-xs-2">
-                        <ul class="list-group" id="interruption">
-                            <li class="list-group-item" style="font-weight: bold">Interuption handling</li>
-                        </ul>
-                    </div>
-
-                    <div class="col-xs-2">
-                        <ul class="list-group" id="discourse_markers">
-                            <li class="list-group-item" style="font-weight: bold">Discourse Markers</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-xs-3 col-xs-offset-5">
+        <div class="btn-group" role="group" id="naver" style="margin-left: auto; margin-right: auto;">
+            <button type="button" class="btn btn-primary">Some topic</button>
+            <button type="button" class="btn btn-default">Some topic</button>
+            <button type="button" class="btn btn-default">Some topic</button>
         </div>
-    </body>
-</html>
+    </div>
+</div>
+<div class="row" id="commands" style="margin-top: 20px;">
+    <div class="col-xs-12">
+        <div class="col-xs-2">
+            <ul class="list-group" id="timeline">
+                <li class="list-group-item" style="font-weight: bold">General</li>
+                <li class="list-group-item">Hello <span class="badge">Q</span></li>
+                <li class="list-group-item">Goodbye <span class="badge">W</span></li>
+            </ul>
+        </div>
+        <div class="col-xs-2">
+            <ul class="list-group" id="encouragement">
+                <li class="list-group-item" style="font-weight: bold">Encouragement</li>
+            </ul>
+        </div>
+        <div class="col-xs-2">
+            <ul class="list-group" id="refocusing">
+                <li class="list-group-item" style="font-weight: bold">Refocusing</li>
+            </ul>
+        </div>
+        <div class="col-xs-2">
+            <ul class="list-group" id="sidelines">
+                <li class="list-group-item" style="font-weight: bold">Sidelines</li>
+            </ul>
+        </div>                    <div class="col-xs-2">
+            <ul class="list-group" id="interruption">
+                <li class="list-group-item" style="font-weight: bold">Interuption handling</li>
+            </ul>
+        </div>
+
+        <div class="col-xs-2">
+            <ul class="list-group" id="discourse_markers">
+                <li class="list-group-item" style="font-weight: bold">Discourse Markers</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
