@@ -1,2 +1,2 @@
 # enterface17
-Main repository for Warewolf in Enterface 17 in Porto.
+Main repository for Werewolf in Enterface 17 in Porto.
