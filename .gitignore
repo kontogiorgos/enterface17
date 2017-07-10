@@ -10,3 +10,9 @@ out/
 .idea/
 *.iml
 *.orig
+
+# Python
+*.pyc
+
+# outputs
+*.log
