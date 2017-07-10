@@ -75,11 +75,9 @@ channel.queue_bind(exchange='sensors', queue=queue_name, routing_key='microphone
 
 
 def callback(ch, method, properties, body):
-    print('-')
-    method.routing_key.rsplit('.', 1)[1]
+    participant = method.routing_key.rsplit('.', 1)[1]
     with MicAsFile(body) as stream:
         while True:
-            print('new!')
             audio_sample = speech_client.sample(
                 stream=stream,
                 encoding=speech.encoding.Encoding.LINEAR16,
@@ -97,7 +95,7 @@ def callback(ch, method, properties, body):
                 stream.timer = None
 
                 data = {'transcript': result.transcript, 'confidence': result.confidence, 'is_final': result.is_final, 'stability': result.stability}
-                channel.basic_publish(exchange='pre-processor', routing_key='asr.data.1', body=json.dumps(data))
+                channel.basic_publish(exchange='pre-processor', routing_key='asr.data.{}'.format(participant), body=json.dumps(data))
                 if result.is_final:
                     break
 
