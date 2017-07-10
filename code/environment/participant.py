@@ -1,0 +1,2 @@
+class Participant(object):
+    pass
