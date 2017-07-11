@@ -122,7 +122,7 @@ class Game(object):
         """
 
         self.in_progress = False
-        self.logger.info("GAME ENDED\nThe {} won!".format(winner))
+        self.logger.info("GAME ENDED\nThe {} won!\n".format(winner))
         self.logger.info("GameHistory\n" + self.get_history())
 
     def status(self):
@@ -193,31 +193,3 @@ class Game(object):
     @staticmethod
     def get_log_name():
         return Game.logname
-
-    def send_message(self, message):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.101', port=32777))
-        channel = connection.channel()
-        channel.queue_declare(queue='hello')
-        channel.basic_publish(exchange='', routing_key='hello', body=message)
-        print("sent " + message)
-        connection.close()
-
-    def receive_message(self):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.101', port=32777))
-        channel = connection.channel()
-        channel.queue_declare(queue='hello')
-
-        channel.basic_consume(callback,
-                              queue='hello',
-                              no_ack=True)
-
-        print(' [*] Waiting for messages. To exit press CTRL+C')
-        channel.start_consuming()
-
-def callback(ch, method, properties, body):
-    print(" [x] Received %r" % body)
-
-
-
-
-
