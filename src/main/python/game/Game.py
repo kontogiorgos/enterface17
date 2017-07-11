@@ -1,6 +1,6 @@
 import itertools
-import logging
 
+from Phases import *
 from Player import Player
 from ruamel import yaml
 
@@ -28,9 +28,6 @@ class Game(object):
         """
 
         # import here to prevent circular dependencies
-        from DayPhase import DayPhase
-        from NightPhase import NightPhase
-        from SetupPhase import SetupPhase
 
         # TODO: handle misuse of arguments (all None, etc.)
 
