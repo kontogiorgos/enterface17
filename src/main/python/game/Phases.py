@@ -67,6 +67,14 @@ class DayPhase(AbstractPhase):
 
         # start with all the players alive can be executed
         kill_targets = list(alive_players)
+        while len(kill_targets) != 1:
+            # collect player votes
+            votes = {p: p.vote(kill_targets) for p in alive_players}
+            # count the votes and get highest voting score
+            counts = Counter(votes.values())
+            _, most_votes = counts.most_common(1)[0]
+            # gather all players that got the highest number of voting
+            kill_targets = [k for k, v in counts.iteritems() if v == most_votes]
         return kill_targets[0]
 
 
