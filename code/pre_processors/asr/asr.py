@@ -58,7 +58,6 @@ class MicAsFile(object):
 
         self.last_timer = self.timer
 
-        # print('len: ', len(data))
         return b''.join(data)
 
 
@@ -67,7 +66,7 @@ speech_client = speech.Client()
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
 channel = connection.channel()
-channel.exchange_declare(exchange='sensors', type='topic')
+channel.exchange_declare(exchange='pre-processor', type='topic')
 
 result = channel.queue_declare(exclusive=True)
 queue_name = result.method.queue
@@ -96,7 +95,7 @@ def callback(ch, method, properties, body):
                 stream.timer = None
 
                 data = {'transcript': result.transcript, 'confidence': result.confidence, 'is_final': result.is_final, 'stability': result.stability}
-                channel.basic_publish(exchange='pre-processor', routing_key='asr.data.{}'.format(participant), body=json.dumps(data))
+                ch.basic_publish(exchange='pre-processor', routing_key='asr.data.{}'.format(participant), body=json.dumps(data))
                 if result.is_final:
                     break
 
