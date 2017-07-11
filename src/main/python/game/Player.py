@@ -3,11 +3,12 @@ from random import choice
 
 class Player(object):
 
-    def __init__(self, name, is_robot, is_werewolf):
+    def __init__(self, name, is_robot=False, is_werewolf=False, gaze=(0, 0, 0)):
         self.name = name
         self.is_robot = is_robot
         self.is_werewolf = is_werewolf
         self.is_alive = True
+        self.gaze = gaze
 
     @staticmethod
     def create_players(players_yaml_list):
