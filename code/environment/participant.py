@@ -1,2 +1,0 @@
-class Participant(object):
-    pass
