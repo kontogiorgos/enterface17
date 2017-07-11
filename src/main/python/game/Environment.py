@@ -1,12 +1,27 @@
-from .participant import Participant
+import pika
+
+from Player import Player
+from Game import Game
+from ruamel import yaml
 
 
 class Environment(object):
-    """docstring for Environment."""
+
+    SETTINGS_FILE = "settings.yaml"
 
     def __init__(self):
-        self.participants = [Participant() for x in range(6)]
+        self.participants = [Player() for x in range(6)]
+        self.settings = self._init_settings(Environment.SETTINGS_FILE)
 
+    @staticmethod
+    def _init_settings(settings_file):
+        try:
+            return yaml.safe_load(open(settings_file, 'r').read())
+        except:
+            raise IOError("An error has occurred while trying to load settings file.")
+
+    def start_game(self, game=None):
+        self.game = game if game and isinstance(game, Game) else Game(Environment.SETTINGS_FILE)
 
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
         channel = connection.channel()

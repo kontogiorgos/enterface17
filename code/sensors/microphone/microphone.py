@@ -19,9 +19,10 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',
 channel = connection.channel()
 channel.basic_publish(exchange='sensors', routing_key='microphone.new_sensor.1', body=SELF_HOST)
 
+
 def callback(in_data, frame_count, time_info, status):
     socket.send(msgpack.packb((in_data, time.time())))
-    return (None, pyaudio.paContinue)
+    return None, pyaudio.paContinue
 
 stream = pyaudio.PyAudio().open(
     format=FORMAT,
@@ -39,5 +40,5 @@ print("finished recording")
 
 stream.stop_stream()
 stream.close()
-audio.terminate()
+# audio.terminate()
 socket.close()

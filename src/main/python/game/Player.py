@@ -46,6 +46,7 @@ class Player(object):
         :return: str
             a YAML representation of the players's info and status
         """
+
         return\
             "- name: {}\n".format(self.name) +\
             "  alive: {}\n".format(self.is_alive) +\
