@@ -5,7 +5,7 @@ players:
     werewolf: True
 
   - name: player2
-    robot: False
+    robot: True
     werewolf: False
 
   - name: player3
@@ -23,3 +23,14 @@ players:
   - name: player6
     robot: False
     werewolf: False
+
+messaging:
+
+  broker_host: "192.168.0.101"
+  broker_port: 32777
+
+  # exchanges
+  artificial_agent:
+  pre_processing:
+    update_gaze: "gaze_update"
+  environment:
