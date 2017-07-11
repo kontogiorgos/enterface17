@@ -8,7 +8,6 @@ from collections import Counter
 
 class AbstractPhase(object):
 
-
     __metaclass__ = ABCMeta
 
     def __init__(self):
@@ -82,7 +81,7 @@ class NightPhase(AbstractPhase):
 
     def __init__(self):
         super(NightPhase, self).__init__()
-        self.name = "Day"
+        self.name = "Night"
 
     def start(self, game):
         # TODO: elimination part
