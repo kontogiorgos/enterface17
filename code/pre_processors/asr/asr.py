@@ -31,7 +31,8 @@ class MicAsFile(object):
     def socket_thread(self):
         self.closed = False
         context = zmq.Context()
-        s = context.socket(zmq.PAIR)
+        s = context.socket(zmq.SUB)
+        s.setsockopt_string( zmq.SUBSCRIBE, '' )
         s.connect(self.address)
 
         while not self.closed:

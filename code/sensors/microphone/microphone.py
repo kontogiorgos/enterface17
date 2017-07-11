@@ -1,26 +1,17 @@
 import pyaudio
-import zmq
 import pika
+import sys
 import time
 import msgpack
-import socket
+sys.path.append('..')
+from create_zmq_server import create_zmq_server
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 CHUNK = 2205
 
-# Get ip
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-ip = s.getsockname()[0]
-s.close()
-
-# Set up zmq server
-context = zmq.Context()
-s = context.socket(zmq.PAIR)
-zmq_port = s.bind_to_random_port('tcp://*', max_tries=150)
-zmq_server_addr = 'tcp://{}:{}'.format(ip, zmq_port)
+zmq_socket, zmq_server_addr = create_zmq_server()
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
@@ -28,7 +19,7 @@ channel = connection.channel()
 channel.basic_publish(exchange='sensors', routing_key='microphone.new_sensor.1', body=zmq_server_addr)
 
 def callback(in_data, frame_count, time_info, status):
-    s.send(msgpack.packb((in_data, time.time())))
+    zmq_socket.send(msgpack.packb((in_data, time.time())))
     return (None, pyaudio.paContinue)
 
 stream = pyaudio.PyAudio().open(
@@ -40,11 +31,9 @@ stream = pyaudio.PyAudio().open(
     stream_callback=callback
 )
 
-input()
+input('[*] Sering at {}. To exit press enter'.format(zmq_server_addr))
 
-
-print("finished recording")
 
 stream.stop_stream()
 stream.close()
-s.close()
+zmq_socket.close()
