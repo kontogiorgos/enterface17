@@ -10,7 +10,7 @@ PORT = 32777
 
 class Environment(object):
 
-    SETTINGS_FILE = "settings.yaml"
+    SETTINGS_FILE = "../settings.yaml"
 
     def __init__(self):
         self.settings = self._init_settings(Environment.SETTINGS_FILE)
