@@ -25,6 +25,9 @@ class Environment(object):
         except:
             raise IOError("An error has occurred while trying to load settings file.")
 
+    def get_participants(self, participant_name):
+        return [x for x in self.participants if x.name == participant_name][0]
+
     def start_game(self, game=None):
         self.game = game if game and isinstance(game, Game) else Game(Environment.SETTINGS_FILE)
 
