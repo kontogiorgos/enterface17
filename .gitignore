@@ -14,5 +14,9 @@ out/
 # Python
 *.pyc
 
+# Python virtual environments
+code/wizard/env
+code/wizard/venv
+
 # outputs
 *.log

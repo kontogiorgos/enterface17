@@ -1,11 +1,12 @@
 import itertools
-import logging
 
+from Phases import *
 from Player import Player
 from ruamel import yaml
 
 
 class Game(object):
+
     logname = "werelog"
 
     END_PHASE = "END"
@@ -28,9 +29,6 @@ class Game(object):
         """
 
         # import here to prevent circular dependencies
-        from DayPhase import DayPhase
-        from NightPhase import NightPhase
-        from SetupPhase import SetupPhase
 
         # TODO: handle misuse of arguments (all None, etc.)
 
@@ -124,7 +122,7 @@ class Game(object):
         """
 
         self.in_progress = False
-        self.logger.info("GAME ENDED\nThe {} won!".format(winner))
+        self.logger.info("GAME ENDED\nThe {} won!\n".format(winner))
         self.logger.info("GameHistory\n" + self.get_history())
 
     def status(self):

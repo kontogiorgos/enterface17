@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-xs-3 col-xs-offset-5">
+        <div class="btn-group" role="group" id="naver" style="margin-left: auto; margin-right: auto;">
+            <button type="button" class="btn btn-primary">Some topic</button>
+            <button type="button" class="btn btn-default">Some topic</button>
+            <button type="button" class="btn btn-default">Some topic</button>
+        </div>
+    </div>
+</div>
+<div class="row" id="commands" style="margin-top: 20px;">
+    <div class="col-xs-12">
+        <div class="col-xs-2">
+            <ul class="list-group" id="timeline">
+                <li class="list-group-item" style="font-weight: bold">General</li>
+                <li class="list-group-item">Hello <span class="badge">Q</span></li>
+                <li class="list-group-item">Goodbye <span class="badge">W</span></li>
+            </ul>
+        </div>
+        <div class="col-xs-2">
+            <ul class="list-group" id="encouragement">
+                <li class="list-group-item" style="font-weight: bold">Encouragement</li>
+            </ul>
+        </div>
+        <div class="col-xs-2">
+            <ul class="list-group" id="refocusing">
+                <li class="list-group-item" style="font-weight: bold">Refocusing</li>
+            </ul>
+        </div>
+        <div class="col-xs-2">
+            <ul class="list-group" id="sidelines">
+                <li class="list-group-item" style="font-weight: bold">Sidelines</li>
+            </ul>
+        </div>                    <div class="col-xs-2">
+            <ul class="list-group" id="interruption">
+                <li class="list-group-item" style="font-weight: bold">Interuption handling</li>
+            </ul>
+        </div>
+
+        <div class="col-xs-2">
+            <ul class="list-group" id="discourse_markers">
+                <li class="list-group-item" style="font-weight: bold">Discourse Markers</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
