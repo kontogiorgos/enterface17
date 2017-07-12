@@ -4,7 +4,7 @@ from Player import Player
 from Game import Game
 from ruamel import yaml
 
-HOST = '192.168.0.101'
+HOST = '192.168.0.100'
 PORT = 32777
 
 
