@@ -13,8 +13,8 @@ CHUNK = 2205
 
 zmq_socket, zmq_server_addr = create_zmq_server()
 
-
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
+credentials = pika.PlainCredentials('test', 'test')
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.108', credentials=credentials))
 channel = connection.channel()
 channel.basic_publish(exchange='sensors', routing_key='microphone.new_sensor.1', body=zmq_server_addr)
 
@@ -37,5 +37,4 @@ input('[*] Sering at {}. To exit press enter'.format(zmq_server_addr))
 
 stream.stop_stream()
 stream.close()
-# audio.terminate()
 zmq_socket.close()
