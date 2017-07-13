@@ -9,7 +9,7 @@ from create_zmq_server import create_zmq_server
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
-CHUNK = 2205
+CHUNK = 2000
 
 zmq_socket, zmq_server_addr = create_zmq_server()
 

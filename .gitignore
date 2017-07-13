@@ -20,3 +20,5 @@ code/wizard/venv
 
 # outputs
 *.log
+
+.watson_credentials.json

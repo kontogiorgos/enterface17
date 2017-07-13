@@ -64,7 +64,8 @@ class MicAsFile(object):
 speech_client = speech.Client()
 
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
+credentials = pika.PlainCredentials('test', 'test')
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.108', credentials=credentials))
 channel = connection.channel()
 channel.exchange_declare(exchange='pre-processor', type='topic')
 
@@ -103,5 +104,5 @@ def callback(ch, method, properties, body):
 
 channel.basic_consume(callback, queue=queue_name)
 
-print(' [*] Waiting for messages. To exit press CTRL+C')
+print('[*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()
