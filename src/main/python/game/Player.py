@@ -2,14 +2,16 @@ from abc import abstractmethod
 from random import choice
 
 
-class Player(object):
+class Player():
 
-    def __init__(self, name, is_robot=False, is_werewolf=False, gaze=(0, 0, 0)):
+    def __init__(self, name='', is_robot=False, is_werewolf=False, position='', gaze=(0, 0, 0)):
         self.name = name
         self.is_werewolf = is_werewolf
         self.is_robot = is_robot
         self.is_alive = True
         self.gaze = gaze
+        self.properties = {}
+        self.position = position
 
     @staticmethod
     def create_players(players_yaml_list):
@@ -28,10 +30,19 @@ class Player(object):
         """
 
         players = []
-        for player in players_yaml_list:
-            players.append(RobotPlayer(player['name'], player['robot'], player['werewolf']) if player['robot'] else
-                           HumanPlayer(player['name'], player['robot'], player['werewolf']))
+        for player in players_yaml_list
+            if player['robot']:
+                players.append(RobotPlayer(**player))
+            else:
+                players.append(HumanPlayer(**player))
         return tuple(players)
+
+
+    def get_furhat_angle(self):
+        if self.properties.get('position'):
+            return {'x': random.random(), 'y': random.random(), 'z': random.random()}
+        else:
+            return {'x': 0, 'y': 0, 'z': 0}
 
     def kill(self):
 
@@ -66,8 +77,8 @@ class Player(object):
 
 class HumanPlayer(Player):
 
-    def __init__(self, name, is_robot=False, is_werewolf=False, gaze=(0, 0, 0)):
-        super(HumanPlayer, self).__init__(name, is_robot=is_robot, is_werewolf=is_werewolf, gaze=gaze)
+    def __init__(self, name, is_robot=False, is_werewolf=False, position='', gaze=(0, 0, 0)):
+        super(HumanPlayer, self).__init__(name, is_robot=is_robot, is_werewolf=is_werewolf, position='', gaze=gaze)
 
     def vote(self, alive_players):
         return choice(alive_players)
@@ -75,8 +86,8 @@ class HumanPlayer(Player):
 
 class RobotPlayer(Player):
 
-    def __init__(self, name, is_robot=False, is_werewolf=False, gaze=(0, 0, 0)):
-        super(RobotPlayer, self).__init__(name, is_robot=is_robot, is_werewolf=is_werewolf, gaze=gaze)
+    def __init__(self, name, is_robot=False, is_werewolf=False, position='', gaze=(0, 0, 0)):
+        super(RobotPlayer, self).__init__(name, is_robot=is_robot, is_werewolf=is_werewolf, position='', gaze=gaze)
 
     def vote(self, alive_players):
         return choice(alive_players)

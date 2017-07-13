@@ -3,26 +3,50 @@ players:
   - name: player1
     robot: False
     werewolf: True
+    position:
+      - x: 0
+        y: 0
+        z: 0
 
   - name: player2
     robot: True
     werewolf: False
+    position:
+      - x: 0
+        y: 0
+        z: 0
 
   - name: player3
     robot: False
     werewolf: False
+    position:
+      - x: 0
+        y: 0
+        z: 0
 
   - name: player4
     robot: False
     werewolf: False
+    position:
+      - x: 0
+        y: 0
+        z: 0
 
   - name: player5
     robot: False
     werewolf: False
+    position:
+      - x: 0
+        y: 0
+        z: 0
 
   - name: player6
     robot: False
     werewolf: False
+    position:
+      - x: 0
+        y: 0
+        z: 0
 
 messaging:
 
