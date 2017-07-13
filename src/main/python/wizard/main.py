@@ -2,7 +2,8 @@
 
 import signal
 from flask import Flask, render_template, request
-from furhat import connect_to_iristk
+import pika
+import json
 # from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
@@ -10,14 +11,22 @@ app = Flask(__name__)
 # socketio = SocketIO(app)
 
 
-FURHAT_HOST = '127.0.0.1'
-FURHAT_AGENT = 'furhat6'
-
-
 @app.route('/say')
 def say():
-    with connect_to_iristk(FURHAT_HOST) as furhat_client:
-        furhat_client.say(FURHAT_AGENT, request.args.get('text', ''))
+    RABBITMQ_CONNECTION = {'host': 'localhost', 'port': 32777}
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(**RABBITMQ_CONNECTION))
+    channel = connection.channel()
+    channel.basic_publish(exchange='wizard', routing_key='action.say', body=json.dumps({'text': request.args.get('text', '')}))
+    return 'OK'
+
+@app.route('/accuse')
+def accuse():
+    RABBITMQ_CONNECTION = {'host': 'localhost', 'port': 32777}
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters(**RABBITMQ_CONNECTION))
+    channel = connection.channel()
+    channel.basic_publish(exchange='wizard', routing_key='action.accuse', body=json.dumps({'participant': request.args.get('participant', '')}))
     return 'OK'
 
 
