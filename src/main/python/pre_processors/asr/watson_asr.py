@@ -31,8 +31,10 @@ last_timer = None
 
 
 def callback(ch, method, properties, body):
-    print('connected!')
     participant = method.routing_key.rsplit('.', 1)[1]
+
+    print('connected {}'.format(method.routing_key))
+
 
     def connect_to_watson():
         def on_open(ws):

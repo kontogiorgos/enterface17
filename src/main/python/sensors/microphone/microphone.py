@@ -4,27 +4,9 @@ import time
 import msgpack
 sys.path.append('../..')
 import numpy as np
+import re
 from shared import create_zmq_server, MessageQueue
 
-
-
-# zmq_socket, zmq_server_addr = create_zmq_server()
-#
-# credentials = pika.PlainCredentials('test', 'test')
-# connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.108', credentials=credentials))
-# channel = connection.channel()
-# channel.basic_publish(exchange='sensors', routing_key='microphone.new_sensor.1', body=zmq_server_addr)
-#
-# def callback(indata, frames, _time, status):
-#     # print(round(indata[:,0].mean(), 2), round(indata[:,1].mean(), 2))
-#     print(np.frombuffer(indata).shape)
-#     zmq_socket.send(msgpack.packb(( np.frombuffer(indata)[:,1].tobytes() , time.time())))
-#     # zmq_socket.send(msgpack.packb((indata, time.time())))
-#
-#
-# with sd.RawInputStream(channels=2, samplerate=44100, callback=callback):
-#     input('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
-# zmq_socket.close()
 
 
 FORMAT = pyaudio.paInt16
@@ -37,12 +19,21 @@ zmq_socket_2, zmq_server_addr_2 = create_zmq_server()
 
 mq = MessageQueue()
 
+p = pyaudio.PyAudio()
+for i in range(p.get_device_count()):
+    d= p.get_device_info_by_index(i)
+    print('[{}] {}'.format(d['index'], d['name']))
+device_index = int(input('Select device: '))
+
+device = p.get_device_info_by_index(device_index)
+
+device_names = re.search('\[(.*)\]\s\/\sm-audio', device['name']).group(1).split(',')
 
 mq.publish(
-    exchange='sensors', routing_key='microphone.new_sensor.red', body=zmq_server_addr_1
+    exchange='sensors', routing_key='microphone.new_sensor.{}'.format(device_names[0]), body=zmq_server_addr_1
 )
 mq.publish(
-    exchange='sensors', routing_key='microphone.new_sensor.blue', body=zmq_server_addr_2
+    exchange='sensors', routing_key='microphone.new_sensor.{}'.format(device_names[1]), body=zmq_server_addr_2
 )
 
 
@@ -53,10 +44,12 @@ def callback(in_data, frame_count, time_info, status):
     zmq_socket_2.send(msgpack.packb((result[:, 1].tobytes(), time.time())))
     return None, pyaudio.paContinue
 
-stream = pyaudio.PyAudio().open(
+
+stream = p.open(
     format=FORMAT,
     channels=CHANNELS,
     rate=RATE,
+    input_device_index=device_index,
     input=True,
     frames_per_buffer=CHUNK,
     stream_callback=callback
