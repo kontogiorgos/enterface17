@@ -2,24 +2,26 @@ import pika
 import sys
 import time
 import msgpack
-sys.path.append('..')
-from create_zmq_server import create_zmq_server
+sys.path.append('../..')
+from shared import create_zmq_server, MessageQueue
 from subprocess import Popen, PIPE
+import yaml
+
+SETTINGS_FILE = '../../settings.yaml'
 
 # Define server
 zmq_socket, zmq_server_addr = create_zmq_server()
+mq = MessageQueue()
 
 # Estabish la conneccion!
-credentials = pika.PlainCredentials('test', 'test')
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.108', credentials=credentials))
-channel = connection.channel()
-channel.basic_publish(exchange='sensors', routing_key='mocap.new_sensor.1', body=zmq_server_addr)
+settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
+mq.publish(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], body=zmq_server_addr)
 
 # Wait a minute!
-time.sleep(2)
+#time.sleep(2)
 
 # Get mocap data stream
-process = Popen(['./vicon/ViconDataStreamSDK_CPPTest', '192.168.0.108'], stdout=PIPE, stderr=PIPE)
+process = Popen(['./vicon/ViconDataStreamSDK_CPPTest', settings['messaging']['mocap_host']], stdout=PIPE, stderr=PIPE)
 
 # Send each data stream
 for stdout_line in iter(process.stdout.readline, ""):

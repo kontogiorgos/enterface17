@@ -50,14 +50,17 @@ players:
 
 messaging:
 
-  # broker_host: "192.168.0.108"
-  # broker_port: 5672
-  # broker_user: "test"
-  # broker_pass: "test"
-  broker_host: "localhost"
-  broker_port: 32777
-  broker_user: "guest"
-  broker_pass: "guest"
+  broker_host: "192.168.0.108"
+  broker_port: 5672
+  broker_user: "test"
+  broker_pass: "test"
+  #broker_host: "localhost"
+  #broker_port: 32777
+  #broker_user: "guest"
+  #broker_pass: "guest"
+
+  # sensor hosts
+  mocap_host: "192.168.0.108"
 
   # exchanges
   artificial_agent: "artificial-agent"
@@ -70,3 +73,6 @@ messaging:
   camera: "camera"
   kinect: "kinect"
   mocap: "mocap"
+
+  # new sensor
+  new_sensor_mocap: "mocap.new_sensor"
