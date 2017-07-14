@@ -4,22 +4,19 @@ import json
 import time
 import msgpack
 import re
+import sys
+sys.path.append('../..')
+from shared import MessageQueue
+import yaml
 
-# Iniciate la conneccion!
-credentials = pika.PlainCredentials('test', 'test')
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.108', credentials=credentials))
-channel = connection.channel()
-channel.exchange_declare(exchange='pre-processor', type='topic')
-
-result = channel.queue_declare(exclusive=True)
-queue_name = result.method.queue
-
-# Listen to mocap sensor
-channel.queue_bind(exchange='sensors', queue=queue_name, routing_key='mocap.new_sensor.*')
+# Settings
+SETTINGS_FILE = '../../settings.yaml'
+settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Procees input data
 def callback(ch, method, properties, body):
-    participant = method.routing_key.rsplit('.', 1)[1]
+    print('connected!')
+
     context = zmq.Context()
     s = context.socket(zmq.SUB)
     s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
@@ -48,13 +45,25 @@ def callback(ch, method, properties, body):
             objects = objects[1]
             print "objects: ", objects
 
-        
+        # next
 
         # Send processed data
-        #ch.basic_publish(exchange='pre-processor', routing_key='mocap.data.{}'.format(participant), body=json.dumps(data))
+        # message = {
+        #   'action': 'start',
+        #   'content-type': 'audio/l16;rate=44100',
+        #   'word_confidence': True,
+        #   'timestamps': True,
+        #   'continuous' : True,
+        #   'interim_results' : True,
+        # }
+        #
+        # print(json.dumps(message))
+        # ws.send(json.dumps(message).encode('utf-8'))
+        #ch.basic_publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=json.dumps(data))
     s.close()
 
-channel.basic_consume(callback, queue=queue_name)
+mq = MessageQueue()
+mq.bind_to_queue(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
-channel.start_consuming()
+mq.listen()

@@ -7,6 +7,7 @@ from shared import create_zmq_server, MessageQueue
 from subprocess import Popen, PIPE
 import yaml
 
+# Settings
 SETTINGS_FILE = '../../settings.yaml'
 
 # Define server
