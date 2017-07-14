@@ -23,7 +23,7 @@ process = Popen(['./vicon/ViconDataStreamSDK_CPPTest', '192.168.0.108'], stdout=
 
 # Send each data stream
 for stdout_line in iter(process.stdout.readline, ""):
-    print('Sending mocap stream')
+    print(stdout_line)
     zmq_socket.send(msgpack.packb((stdout_line, time.time())))
 
 # Print input
