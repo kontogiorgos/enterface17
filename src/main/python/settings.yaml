@@ -59,6 +59,9 @@ messaging:
   # broker_user: "guest"
   # broker_pass: "guest"
 
+  # sensor hosts
+  mocap_host: "192.168.0.108"
+
   # exchanges
   artificial_agent: "artificial-agent"
   sensors: "sensors"
@@ -70,3 +73,6 @@ messaging:
   camera: "camera"
   kinect: "kinect"
   mocap: "mocap"
+
+  # new sensor
+  new_sensor_mocap: "mocap.new_sensor"
