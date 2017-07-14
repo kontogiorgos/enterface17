@@ -50,11 +50,23 @@ players:
 
 messaging:
 
-  broker_host: "192.168.0.101"
+  # broker_host: "192.168.0.108"
+  # broker_port: 5672
+  # broker_user: "test"
+  # broker_pass: "test"
+  broker_host: "localhost"
   broker_port: 32777
+  broker_user: "guest"
+  broker_pass: "guest"
 
   # exchanges
-  artificial_agent:
-  pre_processing:
-    update_gaze: "gaze_update"
-  environment:
+  artificial_agent: "artificial-agent"
+  sensors: "sensors"
+  pre_processing: "pre-processor"
+  environment: "environment"
+
+  # sensors
+  microphone: "microphone"
+  camera: "camera"
+  kinect: "kinect"
+  mocap: "mocap"
