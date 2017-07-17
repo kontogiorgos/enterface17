@@ -17,8 +17,6 @@ from shared import MessageQueue
 
 mq = MessageQueue()
 
-
-
 # define initial plotting stuff
 target_gaze_dic = {}
 time_gaze_dict = {}
@@ -40,12 +38,11 @@ def callback(ch, method, properties, body):
     s = context.socket(zmq.SUB)
     s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
     s.connect(body)
-    print "callback"
     while True:
         data = s.recv()
         msgdata, timestamp = msgpack.unpackb(data, use_list=False)
         update_gaze_target_counts(msgdata['GazeCoding'], timestamp)
-        send_to_environment(method)
+        send_to_environment(msgdata['GazeCoding'], method, timestamp)
     s.close()  # do we need this?
 
 
@@ -53,19 +50,23 @@ def record_target_change(rt_data):
     global old_rt_data
     if rt_data != old_rt_data:
         gaze_change = True
-    #old_rt_data=rt_data
     else:
-        gaze_change=False
-    old_rt_data = rt_data
-    print rt_data, gaze_change
+        gaze_change = False
+    old_rt_data = rt_data  # set previous data to new one
 
 
-def send_to_environment(method):
-    participant = method.routing_key.rsplit('.', 1)[1]
-    mq.publish(
-        exchange='environment', routing_key='kinect-gaze.data.{}'.format(participant), body=json.dumps(target_gaze_dic)
-    )
-    print json.dumps(target_gaze_dic)
+def send_to_environment(rt_data, method, timestamp):
+    global mq
+    global old_rt_data
+
+    if rt_data != old_rt_data:
+        # gaze_change = True
+        participant = method.routing_key.rsplit('.', 1)[1]
+        # kinect.append({'name': 'kinect-gaze', 'time': time.time()})
+        mq.publish(
+            exchange='environment', routing_key='kinect-gaze.data.{}'.format(participant), body=json.dumps({"target_gaze_dic": target_gaze_dic, "timestamp": timestamp})
+        )
+        print json.dumps({"target_gaze_dic": target_gaze_dic, "timestamp": timestamp})
 
 
 def update_gaze_target_counts(rt_data, timestamp):
@@ -159,9 +160,8 @@ def listen():
     Listen to queues relevant to Kinect data.
     """
 
-    mq.bind_to_queue(
-        exchange='sensors', routing_key='kinect.new_sensor.*', callback=callback
-    )
+    global mq
+    mq.bind_to_queue(exchange='sensors', routing_key='kinect.new_sensor.*', callback=callback)
 
     print('[*] Waiting for messages. To exit press CTRL+C')
     mq.listen()
