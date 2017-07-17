@@ -37,7 +37,7 @@ def callback(ch, method, properties, body):
             frames = r0.group(1)
             if frames != '0':
                 frame = frames
-                print "--------------------------------------------------"
+                print "----------------------------------------------------------------"
                 print "Frame: ", frame
 
         # Check how many objects
@@ -70,6 +70,30 @@ def callback(ch, method, properties, body):
         if r5:
             rotation = r5.group(1)
             print "Rotation: ", rotation
+
+        # Get marker 0 position
+        r6 = re.search('Marker #0: (.+?) False', msgdata)
+        if r6:
+            marker0 = r6.group(1)
+            print "Marker 0: ", marker0
+
+        # Get marker 1 position
+        r7 = re.search('Marker #1: (.+?) False', msgdata)
+        if r7:
+            marker1 = r7.group(1)
+            print "Marker 1: ", marker1
+
+        # Get marker 2 position
+        r8 = re.search('Marker #2: (.+?) False', msgdata)
+        if r8:
+            marker2 = r8.group(1)
+            print "Marker 2: ", marker2
+
+        # Get marker 3 position
+        r9 = re.search('Marker #3: (.+?) False', msgdata)
+        if r9:
+            marker3 = r9.group(1)
+            print "Marker 3: ", marker3
 
         # Send processed data
         # message = {
