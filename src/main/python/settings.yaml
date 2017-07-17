@@ -80,3 +80,6 @@ messaging:
 
   # new sensor
   new_sensor_mocap: "mocap.new_sensor"
+
+  # pre_processing
+  mocap_processing: "mocap.processing"

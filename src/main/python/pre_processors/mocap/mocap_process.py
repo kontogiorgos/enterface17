@@ -96,18 +96,43 @@ def callback(ch, method, properties, body):
             print "Marker 3: ", marker3
 
         # Send processed data
-        # message = {
-        #   'action': 'start',
-        #   'content-type': 'audio/l16;rate=44100',
-        #   'word_confidence': True,
-        #   'timestamps': True,
-        #   'continuous' : True,
-        #   'interim_results' : True,
-        # }
-        #
-        # print(json.dumps(message))
-        # ws.send(json.dumps(message).encode('utf-8'))
-        #ch.basic_publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=json.dumps(data))
+        json_data = {
+        	"frame": "17044156",
+        	"participant": "red",
+        	"coord": "xyz_left",
+        	"head": {
+        		"type": "glasses",
+        		"name":  "glasses_red",
+        		"position": {"x": 209.886, "y": 2296.58, "z": 852.55},
+        		"rotation": {"x": 0.0488613, "y": -0.0312445, "z": 0.912453, "w": 0.405051},
+        		"markers":
+        		[
+        			{
+        				"name": "glasses1a",
+        				"position": {"x": 154.961, "y": 2351.84, "z": 861.614}
+        			},
+        			{
+        				"name": "glasses1c",
+        				"position": {"x": 119.116, "y": 2315.4, "z": 854.728}
+        			},
+        			{
+        				"name": "glasses1d",
+        				"position": {"x": 258.76, "y": 2203.29, "z": 842.933}
+        			},
+        			{
+        				"name": "glasses1b",
+        				"position": {"x": 282.3, "y": 2268.21, "z": 848.115}
+        			}
+        		]
+        	},
+        	"glove_left": {},
+        	"glove_right": {}
+        }
+
+        key = settings['messaging']['mocap_processing']
+        participant = method.routing_key.rsplit('.', 1)[1]
+        routing_key = "{key}.{participant}".format(key=key, participant=participant)
+        mq.publish(exchange='pre-processor', routing_key=routing_key, body=json.dumps(json_data))
     s.close()
 
 mq = MessageQueue()
