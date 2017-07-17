@@ -97,7 +97,7 @@ def callback(ch, method, properties, body):
 
         # Send processed data
         json_data = {
-        	"frame": "17044156",
+        	"frame": frame,
         	"participant": "red",
         	"coord": "xyz_left",
         	"head": {
