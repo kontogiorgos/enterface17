@@ -2,19 +2,20 @@ import sys
 import pika
 import time
 import msgpack
-sys.path.append('..')
-from create_zmq_server import create_zmq_server
+sys.path.append('../../')
+# from create_zmq_server import create_zmq_server
 from GazeSense import GazeSenseSub
+from shared import create_zmq_server, MessageQueue
 
 KINECT_STREAM_TIMEOUT = 10.0  # the amount of time data from the Kinect will be sent
 
 zmq_socket, zmq_server_addr = create_zmq_server()
 
-credentials = pika.PlainCredentials('test', 'test')
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='192.168.0.108', credentials=credentials))
-channel = connection.channel()
-channel.basic_publish(exchange='sensors', routing_key='kinect.new_sensor.1', body=zmq_server_addr)
+mq = MessageQueue()
 
+mq.publish(
+    exchange='sensors', routing_key='kinect.new_sensor.red', body=zmq_server_addr
+)
 
 def my_callback(data):
     zmq_socket.send(msgpack.packb((data, time.time())))
