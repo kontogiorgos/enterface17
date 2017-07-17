@@ -4,6 +4,9 @@ import pika
 # from .. import Player
 from threading import Thread
 import json
+import sys
+sys.path.append('../..')
+from shared import MessageQueue
 # etc..
 
 
@@ -26,28 +29,38 @@ class Agent(object):
 
 
     def listen_to_wizard_events(self):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(**self.RABBITMQ_CONNECTION))
-        channel = connection.channel()
-        channel.exchange_declare(exchange='wizard', type='topic')
-        result = channel.queue_declare(exclusive=True)
-        queue_name = result.method.queue
-        channel.queue_bind(exchange='wizard', queue=queue_name, routing_key='action.*')
+        mq = MessageQueue()
+        mq.bind_to_queue(
+            exchange='wizard', routing_key='action.*', callback=callback
+        )
+
 
         # Callback for wizard events. map to furhat actions
         def callback(ch, method, properties, body):
             action = method.routing_key.rsplit('.', 1)[1]
             msg = json.loads(body)
+            print(msg)
             if action == 'say':
-                self.say(msg['text'])
+                pass
+                #self.say(msg['text'])
             if action == 'accuse':
-                self.say('I accuse you')
-                location = self.environment.get_participants(msg['participant']).get_furhat_angle()
-                self.gaze_at({'x': 2, 'y': 0, 'z': 2})
+                #location = self.environment.get_participants(msg['participant']).get_furhat_angle()
+                #self.gaze_at(location)
+                # self.say('I accuse you')
+                pass
+            if action == 'defend':
+                #location = self.environment.get_participants(msg['participant']).get_furhat_angle()
+                #self.gaze_at(location)
+                # self.say('I accuse you')
+                pass
+            if action == 'support':
+                #location = self.environment.get_participants(msg['participant']).get_furhat_angle()
+                #self.gaze_at(location)
+                # self.say('I accuse you')
+                pass
+        print('[*] Waiting for messages. To exit press CTRL+C')
+        mq.listen()
 
-
-        channel.basic_consume(callback, queue=queue_name)
-        print(' [*] Waiting for messages. To exit press CTRL+C')
-        channel.start_consuming()
 
     def say(self, text):
         with connect_to_iristk(self.FURHAT_IP) as furhat_client:

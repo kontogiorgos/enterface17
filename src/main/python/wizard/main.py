@@ -4,6 +4,7 @@ import signal
 from flask import Flask, render_template, request
 import pika
 import json
+import sys
 sys.path.append('..')
 from shared import create_zmq_server, MessageQueue
 
@@ -24,6 +25,7 @@ def say():
 @app.route('/dialog_act')
 def accuse():
     action = request.args.get('action')
+    print(action)
     if action:
         mq.publish(
             exchange='wizard',
