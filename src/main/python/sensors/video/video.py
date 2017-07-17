@@ -1,25 +1,35 @@
+
 import zmq
 import pika
 import time
 import msgpack
+import cv2
+import sys
+import zmq
+sys.path.append('../..')
+sys.path.append('../')
+from shared import create_zmq_server, MessageQueue
+# zmq_socket, zmq_server_addr = create_zmq_server()
 
 
-HOST = 'tcp://*:5556'
-SELF_HOST = 'tcp://127.0.0.1:5556'
-
+# Set up zmq server
 context = zmq.Context()
-socket = context.socket(zmq.PAIR)
-socket.bind(HOST)
+zmq_socket = context.socket(zmq.PUB)
+zmq_port = zmq_socket.bind('tcp://*:8083')
+zmq_server_addr = 'tcp://{}:{}'.format('127.0.0.1', 8083)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
-channel = connection.channel()
-channel.basic_publish(exchange='sensors', routing_key='video.new_sensor.1', body=SELF_HOST)
+
+mq = MessageQueue()
+
+mq.publish(exchange='sensors', routing_key='video.new_sensor.1', body=zmq_server_addr)
 
 
 cap = cv2.VideoCapture(0)
 while(True):
     _, frame = cap.read()
-    socket.send(msgpack.packb((frame, time.time())))
+    print(_, frame)
+    if frame:
+        zmq_socket.send(msgpack.packb((frame, time.time())))
     # cv2.imshow('frame', frame)
     # if cv2.waitKey(1) & 0xFF == ord('q'):
     #     break
@@ -29,4 +39,4 @@ input()
 print("finished recording")
 
 cap.release()
-socket.close()
+zmq_socket.close()

@@ -36,7 +36,6 @@ proto-google-cloud-speech-v1==0.15.3
 protobuf==3.3.0
 pyasn1==0.2.3
 pyasn1-modules==0.0.9
-PyAudio==0.2.11
 pycparser==2.18
 pyOpenSSL==17.1.0
 pysolr==3.6.0
