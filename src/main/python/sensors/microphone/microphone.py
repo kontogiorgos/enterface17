@@ -35,10 +35,14 @@ if not device_index:
 device_names = device_names_string.split(',')
 
 mq.publish(
-    exchange='sensors', routing_key='microphone.new_sensor.{}'.format(device_names[0]), body=zmq_server_addr_1
+    exchange='sensors',
+    routing_key='microphone.new_sensor.{}'.format(device_names[0]),
+    body={'address': zmq_server_addr_1, 'file_type': 'audio'}
 )
 mq.publish(
-    exchange='sensors', routing_key='microphone.new_sensor.{}'.format(device_names[1]), body=zmq_server_addr_2
+    exchange='sensors',
+    routing_key='microphone.new_sensor.{}'.format(device_names[1]),
+    body={'address': zmq_server_addr_2, 'file_type': 'audio'}
 )
 
 

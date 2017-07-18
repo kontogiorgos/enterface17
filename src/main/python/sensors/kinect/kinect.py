@@ -14,7 +14,7 @@ zmq_socket, zmq_server_addr = create_zmq_server()
 mq = MessageQueue()
 
 mq.publish(
-    exchange='sensors', routing_key='kinect.new_sensor.red', body=zmq_server_addr
+    exchange='sensors', routing_key='kinect.new_sensor.red', body={'address': zmq_server_addr, 'file_type': 'txt'}
 )
 
 def my_callback(data):

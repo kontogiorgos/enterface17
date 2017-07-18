@@ -16,7 +16,11 @@ mq = MessageQueue()
 
 # Estabish la conneccion!
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
-mq.publish(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], body=zmq_server_addr)
+mq.publish(
+    exchange='sensors',
+    routing_key=settings['messaging']['new_sensor_mocap'],
+    body={'address': zmq_server_addr, 'file_type': 'txt'}
+)
 
 # Wait a minute!
 #time.sleep(2)

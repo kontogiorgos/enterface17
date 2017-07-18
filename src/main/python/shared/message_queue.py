@@ -4,6 +4,7 @@ import yaml
 import os
 import pika
 import zmq
+import json
 
 
 SETTINGS_FILE = os.path.abspath(
@@ -42,8 +43,8 @@ class MessageQueue(object):
         message = socket.recv()
         self.time_offset = float(message) - time.time()
 
-    def publish(self, exchange='', routing_key='', body=''):
-        self.channel.basic_publish(exchange=exchange, routing_key=routing_key, body=body)
+    def publish(self, exchange='', routing_key='', body={}):
+        self.channel.basic_publish(exchange=exchange, routing_key=routing_key, body=json.dumps(body))
 
     def get_shifted_time(self):
         return time.time() + self.time_offset
@@ -54,7 +55,7 @@ class MessageQueue(object):
         self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
 
         def callback_wrapper(ch, method, properties, body):
-            callback(self, self.get_shifted_time, method.routing_key, body)
+            callback(self, self.get_shifted_time, method.routing_key, json.loads(body))
 
         self.channel.basic_consume(callback_wrapper, queue=queue_name)
 

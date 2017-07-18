@@ -36,7 +36,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
     context = zmq.Context()
     s = context.socket(zmq.SUB)
     s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
-    s.connect(body)
+    s.connect(body.get('address'))
 
     # Initiate parameters
     frame = "0"
@@ -174,7 +174,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
             key = settings['messaging']['mocap_processing']
             participant = routing_key.rsplit('.', 1)[1]
             routing_key = "{key}.{participant}".format(key=key, participant=participant)
-            _mq.publish(exchange='pre-processor', routing_key=routing_key, body=json.dumps(json_data))
+            _mq.publish(exchange='pre-processor', routing_key=routing_key, body=json_data)
     s.close()
 
 mq = MessageQueue()

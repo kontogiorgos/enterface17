@@ -16,13 +16,13 @@ SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Procees input data
-def callback(ch, method, properties, body):
+def callback(_mq, get_shifted_time, routing_key, body):
     print('connected!', body)
 
     context = zmq.Context()
     s = context.socket(zmq.SUB)
     s.setsockopt_string(zmq.SUBSCRIBE, '')
-    s.connect(body)
+    s.connect(body.get('address'))
 
     while True:
         data = s.recv()
@@ -32,7 +32,7 @@ def callback(ch, method, properties, body):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        #ch.basic_publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=json.dumps(data))
+        #ch.basic_publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=data)
     s.close()
 
 mq = MessageQueue()

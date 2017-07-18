@@ -8,7 +8,6 @@ import sys
 import zmq
 import numpy as np
 sys.path.append('../..')
-sys.path.append('../')
 from shared import create_zmq_server, MessageQueue
 zmq_socket, zmq_server_addr = create_zmq_server()
 import socket
@@ -22,7 +21,11 @@ port = int(sys.argv[1])
 UDP_IP = "127.0.0.1"
 
 mq = MessageQueue()
-mq.publish(exchange='sensors', routing_key='scren_capture.new_sensor.{}'.format(participant), body=zmq_server_addr)
+mq.publish(
+    exchange='sensors',
+    routing_key='scren_capture.new_sensor.{}'.format(participant),
+    body={'address': zmq_server_addr, 'file_type': 'video'}
+)
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
