@@ -13,7 +13,8 @@ SETTINGS_FILE = os.path.abspath(
 
 
 class MessageQueue(object):
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
         messaging_settings = self.settings['messaging']
@@ -43,19 +44,37 @@ class MessageQueue(object):
         message = socket.recv()
         self.time_offset = float(message) - time.time()
 
-    def publish(self, exchange='', routing_key='', body={}):
+    def timestamp(self, msg, timestamp_type):
+        timestamps = msg.get('timestamps', [])
+        if timestamps:
+            if timestamps[-1].get('name') != self.name:
+                timestamps.append({'name': self.name})
+            timestamps[-1][timestamp_type] = self.get_shifted_time()
+        else:
+            timestamps.append({'name': self.name, timestamp_type: self.get_shifted_time()})
+
+        msg['timestamps'] = timestamps
+        return msg
+
+    def publish(self, exchange='', routing_key='', body={}, no_time=False):
+        if not no_time:
+            self.timestamp(body, 'departed')
+
         self.channel.basic_publish(exchange=exchange, routing_key=routing_key, body=json.dumps(body))
 
     def get_shifted_time(self):
         return time.time() + self.time_offset
 
-    def bind_queue(self, exchange='', routing_key='', callback=None):
+    def bind_queue(self, exchange='', routing_key='', callback=None, no_time=False):
         result = self.channel.queue_declare(exclusive=True)
         queue_name = result.method.queue
         self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
 
         def callback_wrapper(ch, method, properties, body):
-            callback(self, self.get_shifted_time, method.routing_key, json.loads(body))
+            msg = json.loads(body)
+            if not no_time:
+                self.timestamp(msg, 'arrived')
+            callback(self, self.get_shifted_time, method.routing_key, msg)
 
         self.channel.basic_consume(callback_wrapper, queue=queue_name)
 
