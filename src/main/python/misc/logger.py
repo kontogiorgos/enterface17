@@ -133,7 +133,7 @@ thread.start()
 
 mq = MessageQueue()
 mq.bind_queue(
-    exchange='sensors', routing_key='*.new_sensor', callback=callback
+    exchange='sensors', routing_key='*.new_sensor.*', callback=callback
 )
 
 
