@@ -1,2 +1,2 @@
-cd ../python/sensors/video/
+cd ..\python\sensors\video
 python video.py pink 53421
