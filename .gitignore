@@ -22,3 +22,4 @@ code/wizard/venv
 *.log
 
 .watson_credentials.json
+.smb_credentials.json

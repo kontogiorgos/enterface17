@@ -30,8 +30,9 @@ last_timer = None
 
 
 
-def callback(ch, method, properties, body):
-    participant = method.routing_key.rsplit('.', 1)[1]
+#def callback(ch, method, properties, body):
+def callback(mq, get_shifted_time, routing_key, body):
+    participant = routing_key.rsplit('.', 1)[1]
 
     print('connected {}'.format(method.routing_key))
 
@@ -90,7 +91,7 @@ def callback(ch, method, properties, body):
 
                 routing_key = 'asr.data.{}' if msg["results"][0]["final"] else 'asr.incremental_data.{}'
                 print(data, participant)
-                ch.basic_publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=json.dumps(data))
+                mq.publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=json.dumps(data))
 
 
         headers = {'X-Watson-Authorization-Token': token}

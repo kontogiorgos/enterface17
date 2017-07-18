@@ -8,10 +8,26 @@ import sys
 sys.path.append('../..')
 from shared import MessageQueue
 import yaml
+from collections import defaultdict
 
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
+
+# Dictionaries
+mocap_dict = defaultdict(dict)
+white_dict = defaultdict(list) #glasses1
+pink_dict = defaultdict(list) #kinnect1
+blue_dict = defaultdict(list) #glasses2
+orange_dict = defaultdict(list) #kinnect2
+brown_dict = defaultdict(list) #glasses3
+black_dict = defaultdict(list) #kinnect3
+mocap_dict['white'] = white_dict
+mocap_dict['pink'] = pink_dict
+mocap_dict['blue'] = blue_dict
+mocap_dict['orange'] = orange_dict
+mocap_dict['brown'] = brown_dict
+mocap_dict['black'] = black_dict
 
 # Procees input data
 def callback(ch, method, properties, body):
@@ -22,15 +38,22 @@ def callback(ch, method, properties, body):
     s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
     s.connect(body)
 
+    # Initiate parameters
     frame = "0"
     objects = "0"
     name = "0"
+    pname = "0"
+    position = "0"
+    rotation = "0"
+    marker0 = "0"
+    marker1 = "0"
+    marker2 = "0"
+    marker3 = "0"
 
     while True:
         data = s.recv()
         msgdata, timestamp = msgpack.unpackb(data, use_list=False)
 
-        # Process mocap data
         # Get frame
         r0 = re.search('Frame Number: (.*)', msgdata)
         if r0:
@@ -58,6 +81,11 @@ def callback(ch, method, properties, body):
         if r3:
             name = r3.group(1)
             print "Name: ", name
+
+            r3a = re.search('_(.*)', msgdata)
+            if r3a:
+                pname = r3a.group(1)
+                print "Participant Name: ", pname
 
         # Get object position
         r4 = re.search('Global Translation: (.+?) False', msgdata)
@@ -95,19 +123,64 @@ def callback(ch, method, properties, body):
             marker3 = r9.group(1)
             print "Marker 3: ", marker3
 
+        # Put values on a dictionary
+        if pname == 'white':
+            white_dict['position'] = position
+            white_dict['rotation'] = rotation
+            white_dict['marker0'] = marker0
+            white_dict['marker1'] = marker1
+            white_dict['marker2'] = marker2
+            white_dict['marker3'] = marker3
+        elif pname == 'brown':
+            brown_dict['position'] = position
+            brown_dict['rotation'] = rotation
+            brown_dict['marker0'] = marker0
+            brown_dict['marker1'] = marker1
+            brown_dict['marker2'] = marker2
+            brown_dict['marker3'] = marker3
+
         # Send processed data
-        # message = {
-        #   'action': 'start',
-        #   'content-type': 'audio/l16;rate=44100',
-        #   'word_confidence': True,
-        #   'timestamps': True,
-        #   'continuous' : True,
-        #   'interim_results' : True,
-        # }
-        #
-        # print(json.dumps(message))
-        # ws.send(json.dumps(message).encode('utf-8'))
-        #ch.basic_publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=json.dumps(data))
+        r10 = re.search('Waiting for new frame...', msgdata)
+        if r10:
+            # Send one by one the participant json files
+            # White
+            json_data = {
+            	"frame": frame,
+            	"participant": "red",
+            	"coord": "xyz_left",
+            	"head": {
+            		"type": "glasses",
+            		"name":  "glasses_red",
+            		"position": {"x": 209.886, "y": 2296.58, "z": 852.55},
+            		"rotation": {"x": 0.0488613, "y": -0.0312445, "z": 0.912453, "w": 0.405051},
+            		"markers":
+            		[
+            			{
+            				"name": "glasses1a",
+            				"position": {"x": 154.961, "y": 2351.84, "z": 861.614}
+            			},
+            			{
+            				"name": "glasses1c",
+            				"position": {"x": 119.116, "y": 2315.4, "z": 854.728}
+            			},
+            			{
+            				"name": "glasses1d",
+            				"position": {"x": 258.76, "y": 2203.29, "z": 842.933}
+            			},
+            			{
+            				"name": "glasses1b",
+            				"position": {"x": 282.3, "y": 2268.21, "z": 848.115}
+            			}
+            		]
+            	},
+            	"glove_left": {},
+            	"glove_right": {}
+            }
+
+            key = settings['messaging']['mocap_processing']
+            participant = method.routing_key.rsplit('.', 1)[1]
+            routing_key = "{key}.{participant}".format(key=key, participant=participant)
+            mq.publish(exchange='pre-processor', routing_key=routing_key, body=json.dumps(json_data))
     s.close()
 
 mq = MessageQueue()

@@ -23,31 +23,46 @@ $(document).ready(function() {
             } else if (combo.indexOf('shift') !== -1){
                 modifier = 'accuse';
             }
+
             if (modifier) {
-                var participant = combo.filter(item => item !== modifier)[0]
+                var participant = combo.filter(item => ['alt', 'defend', 'accuse'].indexOf(item) === -1)[0]
                 switch(participant) {
                     case ' ':
                       $.get(`/dialog_act?action=${modifier}&participant=general`)
                       break;
                     case '0':
+                    case 'º':
+                    case ')':
                       $.get(`/dialog_act?action=${modifier}&participant=self`)
                       break;
                     case '1':
+                    case '¡':
+                    case '!':
                       $.get(`/dialog_act?action=${modifier}&participant=black`)
                       break;
                     case '2':
+                    case '™':
+                    case '@':
                       $.get(`/dialog_act?action=${modifier}&participant=brown`)
                       break;
                     case '3':
+                    case '£':
+                    case '#':
                       $.get(`/dialog_act?action=${modifier}&participant=orange`)
                       break;
                     case '4':
+                    case '¢':
+                    case '$':
                       $.get(`/dialog_act?action=${modifier}&participant=blue`)
                       break;
                     case '5':
+                    case '§':
+                    case '^':
                       $.get(`/dialog_act?action=${modifier}&participant=pink`)
                       break;
                     case '6':
+                    case '¶':
+                    case '&':
                       $.get(`/dialog_act?action=${modifier}&participant=white`)
                       break;
                 }

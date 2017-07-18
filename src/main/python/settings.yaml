@@ -48,16 +48,25 @@ players:
         y: 0
         z: 0
 
+file_storage:
+  service_name: 'werewolf'
+  host: '192.168.0.103'
+  port: 139
+
 messaging:
 
-  # broker_host: "192.168.0.108"
-  # broker_port: 5672
-  # broker_user: "test"
-  # broker_pass: "test"
-  broker_host: "192.168.43.83"
-  broker_port: 32777
-  broker_user: "guest"
-  broker_pass: "guest"
+  broker_host: "192.168.0.108"
+  broker_port: 5672
+  broker_user: "test"
+  broker_pass: "test"
+  # broker_host: "localhost"
+  # broker_port: 32777
+  # broker_user: "guest"
+  # broker_pass: "guest"
+
+  # time server host
+  time_server_host: "tcp://localhost:45321"
+
 
   # sensor hosts
   mocap_host: "192.168.0.108"
@@ -67,6 +76,7 @@ messaging:
   sensors: "sensors"
   pre_processing: "pre-processor"
   environment: "environment"
+  wizard: "wizard"
 
   # sensors
   microphone: "microphone"
@@ -76,3 +86,6 @@ messaging:
 
   # new sensor
   new_sensor_mocap: "mocap.new_sensor"
+
+  # pre_processing
+  mocap_processing: "mocap.processing"
