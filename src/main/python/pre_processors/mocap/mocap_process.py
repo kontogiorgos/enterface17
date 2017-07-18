@@ -17,11 +17,17 @@ settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 # Dictionaries
 mocap_dict = defaultdict(lambda : defaultdict(dict))
 # white = glasses1
+mocap_dict['white']['type'] = 'glasses'
 # pink = kinnect1
+mocap_dict['pink']['type'] = 'hat'
 # blue = glasses2
+mocap_dict['blue']['type'] = 'glasses'
 # orange = kinnect2
+mocap_dict['orange']['type'] = 'hat'
 # brown = glasses3
+mocap_dict['brown']['type'] = 'glasses'
 # black = kinnect3
+mocap_dict['black']['type'] = 'hat'
 
 # Procees input data
 def callback(_mq, get_shifted_time, routing_key, body):
@@ -119,6 +125,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
         # Put values on a dictionary
         mocap_dict[pname]['participant'] = pname
+        mocap_dict[pname]['object'] = name
         mocap_dict[pname]['position'] = position
         mocap_dict[pname]['rotation'] = rotation
         mocap_dict[pname]['marker0'] = marker0
@@ -130,16 +137,16 @@ def callback(_mq, get_shifted_time, routing_key, body):
         r10 = re.search('Waiting for new frame...', msgdata)
         if r10:
             # Send one by one the participant json files
-            # White
+            participantname = 'white'
             json_data = {
             	"frame": frame,
-            	"participant": "red",
+            	"participant": mocap_dict[participantname]['participant'],
             	"coord": "xyz_left",
             	"head": {
-            		"type": "glasses",
-            		"name":  "glasses_red",
-            		"position": {"x": 209.886, "y": 2296.58, "z": 852.55},
-            		"rotation": {"x": 0.0488613, "y": -0.0312445, "z": 0.912453, "w": 0.405051},
+            		"type": mocap_dict[participantname]['type'],
+            		"name":  mocap_dict[participantname]['object'],
+            		"position": mocap_dict[participantname]['position'],
+            		"rotation": mocap_dict[participantname]['rotation'],
             		"markers":
             		[
             			{
