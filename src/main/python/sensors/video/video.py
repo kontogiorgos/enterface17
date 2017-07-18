@@ -6,37 +6,30 @@ import msgpack
 import cv2
 import sys
 import zmq
+import numpy as np
 sys.path.append('../..')
 sys.path.append('../')
 from shared import create_zmq_server, MessageQueue
-# zmq_socket, zmq_server_addr = create_zmq_server()
+zmq_socket, zmq_server_addr = create_zmq_server()
+import socket
 
 
-# Set up zmq server
-context = zmq.Context()
-zmq_socket = context.socket(zmq.PUB)
-zmq_port = zmq_socket.bind('tcp://*:8083')
-zmq_server_addr = 'tcp://{}:{}'.format('127.0.0.1', 8083)
 
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5678
 
 mq = MessageQueue()
-
-mq.publish(exchange='sensors', routing_key='video.new_sensor.1', body=zmq_server_addr)
-
-
-cap = cv2.VideoCapture(0)
-while(True):
-    _, frame = cap.read()
-    print(_, frame)
-    if frame:
-        zmq_socket.send(msgpack.packb((frame, time.time())))
-    # cv2.imshow('frame', frame)
-    # if cv2.waitKey(1) & 0xFF == ord('q'):
-    #     break
+mq.publish(exchange='sensors', routing_key='scren_capture.new_sensor.1', body=zmq_server_addr)
 
 
-input()
-print("finished recording")
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((UDP_IP, UDP_PORT))
 
-cap.release()
+while True:
+    data, addr = sock.recvfrom(10000)
+    zmq_socket.send(msgpack.packb((data, time.time())))
+
+input('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
+
+sock.close()
 zmq_socket.close()
