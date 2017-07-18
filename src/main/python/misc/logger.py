@@ -30,75 +30,76 @@ running = True
 
 
 def callback(mq, get_shifted_time, routing_key, body):
-    global running
+    def run():
+        global running
 
 
 
-    conn = SMBConnection(
-        credentials['username'],
-        credentials['password'],
-        credentials['client_machine_name'],
-        credentials['server_name'],
-        use_ntlm_v2 = True
-    )
-    assert conn.connect(settings['file_storage']['host'], settings['file_storage']['port'])
+        conn = SMBConnection(
+            credentials['username'],
+            credentials['password'],
+            credentials['client_machine_name'],
+            credentials['server_name'],
+            use_ntlm_v2 = True
+        )
+        assert conn.connect(settings['file_storage']['host'], settings['file_storage']['port'])
 
 
 
-    try:
-        conn.createDirectory(settings['file_storage']['service_name'], '/logger/{}'.format(session_name))
-    except:
-        pass
-
-    a = 0
-    go_on = True
-    while go_on:
         try:
-            conn.createDirectory(settings['file_storage']['service_name'], '/logger/{}/{}-{}'.format(session_name, routing_key, a))
-            go_on = False
+            conn.createDirectory(settings['file_storage']['service_name'], '/logger/{}'.format(session_name))
         except:
-            a += 1
+            pass
 
-    conn.close()
-    log_file = '/logger/{}/{}-{}/data.txt'.format(session_name, routing_key, a)
-    print('[{}] streamer connected'.format(log_file))
+        a = 0
+        go_on = True
+        while go_on:
+            try:
+                conn.createDirectory(settings['file_storage']['service_name'], '/logger/{}/{}-{}'.format(session_name, routing_key, a))
+                go_on = False
+            except:
+                a += 1
 
-    file_obj = tempfile.NamedTemporaryFile()
-    file_obj.seek(0)
+        conn.close()
+        log_file = '/logger/{}/{}-{}/data.txt'.format(session_name, routing_key, a)
+        print('[{}] streamer connected'.format(log_file))
 
-
-
-    context = zmq.Context()
-    s = context.socket(zmq.SUB)
-    s.setsockopt_string( zmq.SUBSCRIBE, '' )
-    s.RCVTIMEO = 1000
-    s.connect(body)
-
-    i = 0
-
-    while running:
-        try:
-            data = s.recv()
-            msgdata, timestamp = msgpack.unpackb(data, use_list=False)
-            file_obj.write(msgdata)
-
-            if i >= 7000:
-                file_obj.seek(0)
-                q.put((log_file, file_obj))
-                i = 0
-            else:
-                i += 1
-        except zmq.error.Again:
-            break
-
-    file_obj.seek(0)
-    q.put((log_file, file_obj))
-    running = False
-    print('last write')
+        file_obj = tempfile.NamedTemporaryFile()
+        file_obj.seek(0)
 
 
-    s.close()
-    print('[{}] streamer closed'.format(log_file))
+
+        context = zmq.Context()
+        s = context.socket(zmq.SUB)
+        s.setsockopt_string( zmq.SUBSCRIBE, '' )
+        s.RCVTIMEO = 1000
+        s.connect(body)
+
+        i = 0
+
+        while running:
+            try:
+                data = s.recv()
+                msgdata, timestamp = msgpack.unpackb(data, use_list=False)
+                file_obj.write(msgdata)
+
+                if i >= 7000:
+                    file_obj.seek(0)
+                    q.put((log_file, file_obj))
+                    i = 0
+                else:
+                    i += 1
+            except zmq.error.Again:
+                break
+
+        file_obj.seek(0)
+        q.put((log_file, file_obj))
+        s.close()
+        print('[{}] streamer closed'.format(log_file))
+
+    _thread = Thread(target = run)
+    _thread.deamon = True
+    _thread.start()
 
 
 def storage_writer():
@@ -117,7 +118,6 @@ def storage_writer():
         log_file, data = q.get()
         second_file_obj = tempfile.NamedTemporaryFile()
         second_file_obj.seek(0)
-        print(data)
         second_file_obj.write(data.read())
         second_file_obj.seek(0)
         conn.storeFile(settings['file_storage']['service_name'], log_file, second_file_obj)
@@ -143,4 +143,5 @@ thread2.start()
 
 input('[*] Waiting for messages. To exit press enter')
 running = False
+print('ugly hack: now press CTRL-C')
 mq.stop()
