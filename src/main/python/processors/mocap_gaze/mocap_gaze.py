@@ -14,14 +14,14 @@ SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Procees input data
-def callback(ch, method, properties, body):
+def callback(_mq, get_shifted_time, routing_key, body):
     #json.load
     print(body)
     print("-------------------------------------------------")
 
 mq = MessageQueue()
 
-mq.bind_to_queue(exchange='pre-processor', routing_key="{}.*".format(settings['messaging']['mocap_processing']), callback=callback)
+mq.bind_queue(exchange='pre-processor', routing_key="{}.*".format(settings['messaging']['mocap_processing']), callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
 mq.listen()

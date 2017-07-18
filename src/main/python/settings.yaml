@@ -85,7 +85,7 @@ messaging:
   mocap: "mocap"
 
   # new sensor
-  new_sensor_mocap: "mocap.new_sensor"
+  new_sensor_mocap: "mocap.new_sensor.all"
 
   # pre_processing
   mocap_processing: "mocap.processing"

@@ -15,22 +15,16 @@ SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Dictionaries
-mocap_dict = defaultdict(dict)
-white_dict = defaultdict(list) #glasses1
-pink_dict = defaultdict(list) #kinnect1
-blue_dict = defaultdict(list) #glasses2
-orange_dict = defaultdict(list) #kinnect2
-brown_dict = defaultdict(list) #glasses3
-black_dict = defaultdict(list) #kinnect3
-mocap_dict['white'] = white_dict
-mocap_dict['pink'] = pink_dict
-mocap_dict['blue'] = blue_dict
-mocap_dict['orange'] = orange_dict
-mocap_dict['brown'] = brown_dict
-mocap_dict['black'] = black_dict
+mocap_dict = defaultdict(lambda : defaultdict(dict))
+# white = glasses1
+# pink = kinnect1
+# blue = glasses2
+# orange = kinnect2
+# brown = glasses3
+# black = kinnect3
 
 # Procees input data
-def callback(ch, method, properties, body):
+def callback(_mq, get_shifted_time, routing_key, body):
     print('connected!')
 
     context = zmq.Context()
@@ -64,11 +58,11 @@ def callback(ch, method, properties, body):
                 print "Frame: ", frame
 
         # Check how many objects
-        r1 = re.search('Subjects (.+?):', msgdata)
-        if r1:
-            objects = r1.group(1)
-            objects = objects[1]
-            print "Objects: ", objects
+        #r1 = re.search('Subjects (.+?):', msgdata)
+        #if r1:
+            #objects = r1.group(1)
+            #objects = objects[1]
+            #print "Objects: ", objects
 
         # Get Object No
         r2 = re.search('Subject #(.*)', msgdata)
@@ -124,20 +118,13 @@ def callback(ch, method, properties, body):
             print "Marker 3: ", marker3
 
         # Put values on a dictionary
-        if pname == 'white':
-            white_dict['position'] = position
-            white_dict['rotation'] = rotation
-            white_dict['marker0'] = marker0
-            white_dict['marker1'] = marker1
-            white_dict['marker2'] = marker2
-            white_dict['marker3'] = marker3
-        elif pname == 'brown':
-            brown_dict['position'] = position
-            brown_dict['rotation'] = rotation
-            brown_dict['marker0'] = marker0
-            brown_dict['marker1'] = marker1
-            brown_dict['marker2'] = marker2
-            brown_dict['marker3'] = marker3
+        mocap_dict[pname]['participant'] = pname
+        mocap_dict[pname]['position'] = position
+        mocap_dict[pname]['rotation'] = rotation
+        mocap_dict[pname]['marker0'] = marker0
+        mocap_dict[pname]['marker1'] = marker1
+        mocap_dict[pname]['marker2'] = marker2
+        mocap_dict[pname]['marker3'] = marker3
 
         # Send processed data
         r10 = re.search('Waiting for new frame...', msgdata)
@@ -178,13 +165,13 @@ def callback(ch, method, properties, body):
             }
 
             key = settings['messaging']['mocap_processing']
-            participant = method.routing_key.rsplit('.', 1)[1]
+            participant = routing_key.rsplit('.', 1)[1]
             routing_key = "{key}.{participant}".format(key=key, participant=participant)
-            mq.publish(exchange='pre-processor', routing_key=routing_key, body=json.dumps(json_data))
+            _mq.publish(exchange='pre-processor', routing_key=routing_key, body=json.dumps(json_data))
     s.close()
 
 mq = MessageQueue()
-mq.bind_to_queue(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], callback=callback)
+mq.bind_queue(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
 mq.listen()
