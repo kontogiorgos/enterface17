@@ -25,8 +25,8 @@ class MessageQueue(object):
         connection_parameters = pika.ConnectionParameters(
             host=broker_host, port=broker_port, credentials=credentials
         )
-        connection = pika.BlockingConnection(connection_parameters)
-        self.channel = connection.channel()
+        self.connection = pika.BlockingConnection(connection_parameters)
+        self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.settings['messaging']['pre_processing'], type='topic')
         self.channel.exchange_declare(exchange=self.settings['messaging']['sensors'], type='topic')
         self.channel.exchange_declare(exchange=self.settings['messaging']['wizard'], type='topic')
@@ -66,6 +66,9 @@ class MessageQueue(object):
         self.channel.basic_consume(callback, queue=queue_name)
 
 
+    def stop(self):
+        self.channel.stop_consuming()
+        self.connection.close()
 
     def listen(self):
         self.channel.start_consuming()
