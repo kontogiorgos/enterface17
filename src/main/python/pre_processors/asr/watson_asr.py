@@ -31,7 +31,7 @@ last_timer = None
 
 
 #def callback(ch, method, properties, body):
-def callback(mq, get_shifted_time, routing_key):
+def callback(mq, get_shifted_time, routing_key, body):
     participant = routing_key.rsplit('.', 1)[1]
 
     print('connected {}'.format(method.routing_key))

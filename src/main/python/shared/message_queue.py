@@ -54,7 +54,7 @@ class MessageQueue(object):
         self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
 
         def callback_wrapper(ch, method, properties, body):
-            callback(self, self.get_shifted_time, method.routing_key)
+            callback(self, self.get_shifted_time, method.routing_key, body)
 
         self.channel.basic_consume(callback_wrapper, queue=queue_name)
 
