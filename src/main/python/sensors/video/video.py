@@ -13,17 +13,20 @@ from shared import create_zmq_server, MessageQueue
 zmq_socket, zmq_server_addr = create_zmq_server()
 import socket
 
+if len(sys.argv) != 3:
+    exit('error. python video.py [color] [port]')
+participant = sys.argv[1]
+port = int(sys.argv[1])
 
 
 UDP_IP = "127.0.0.1"
-UDP_PORT = 5678
 
 mq = MessageQueue()
-mq.publish(exchange='sensors', routing_key='scren_capture.new_sensor.1', body=zmq_server_addr)
+mq.publish(exchange='sensors', routing_key='scren_capture.new_sensor.{}'.format(participant), body=zmq_server_addr)
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind((UDP_IP, UDP_PORT))
+sock.bind((UDP_IP, port))
 
 while True:
     data, addr = sock.recvfrom(10000)
