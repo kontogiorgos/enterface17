@@ -36,7 +36,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
     s.close()
 
 mq = MessageQueue()
-mq.bind_to_queue(exchange='sensors', routing_key='video.new_sensor.*', callback=callback)
+mq.bind_queue(exchange='sensors', routing_key='video.new_sensor.*', callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
 mq.listen()

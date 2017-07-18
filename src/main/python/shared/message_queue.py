@@ -59,14 +59,6 @@ class MessageQueue(object):
 
         self.channel.basic_consume(callback_wrapper, queue=queue_name)
 
-    def bind_to_queue(self, exchange='', routing_key='', callback=None):
-        print('\n-- MessageQueue.bind_to_queue is deprecated, use MessageQueue.bind_queue instead --\n')
-        result = self.channel.queue_declare(exclusive=True)
-        queue_name = result.method.queue
-        self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
-        self.channel.basic_consume(callback, queue=queue_name)
-
-
     def stop(self):
         self.channel.stop_consuming()
         self.connection.close()

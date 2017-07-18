@@ -30,15 +30,15 @@ class Agent(object):
 
     def listen_to_wizard_events(self):
         mq = MessageQueue()
-        mq.bind_to_queue(
+        mq.bind_queue(
             exchange='wizard', routing_key='action.*', callback=callback
         )
 
 
         # Callback for wizard events. map to furhat actions
-        def callback(ch, method, properties, body):
-            action = method.routing_key.rsplit('.', 1)[1]
-            msg = json.loads(body)
+
+        def callback(_mq, get_shifted_time, routing_key, msg):
+            action = routing_key.rsplit('.', 1)[1]
             print(msg)
             if action == 'say':
                 pass
