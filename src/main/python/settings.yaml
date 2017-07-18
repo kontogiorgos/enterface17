@@ -71,6 +71,7 @@ messaging:
   sensors: "sensors"
   pre_processing: "pre-processor"
   environment: "environment"
+  wizard: "wizard"
 
   # sensors
   microphone: "microphone"
