@@ -39,24 +39,24 @@ def callback(_mq, get_shifted_time, routing_key, body):
     s.connect(body.get('address'))
 
     # Initiate parameters
-    frame = "0"
-    objects = "0"
-    name = "0"
-    pname = "0"
-    position = "0"
-    rotation = "0"
-    marker0 = "0"
-    marker0name = "0"
-    marker0pos = "0"
-    marker1 = "0"
-    marker1name = "0"
-    marker1pos = "0"
-    marker2 = "0"
-    marker2name = "0"
-    marker2pos = "0"
-    marker3 = "0"
-    marker3name = "0"
-    marker3pos = "0"
+    frame = None
+    objects = None
+    name = None
+    pname = None
+    position = None
+    rotation = None
+    marker0 = None
+    marker0name = None
+    marker0pos = None
+    marker1 = None
+    marker1name = None
+    marker1pos = None
+    marker2 = None
+    marker2name = None
+    marker2pos = None
+    marker3 = None
+    marker3name = None
+    marker3pos = None
 
     while True:
         data = s.recv()
@@ -171,46 +171,69 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
         # Send processed data
         r10 = re.search('Waiting for new frame...', msgdata)
-        if r10:
+        if r10 and all(mocap_dict[pname].values()):
             # Send one by one the participant json files
-            participantname = 'white'
-            json_data = {
-            	"frame": frame,
-            	"participant": mocap_dict[participantname]['participant'],
-            	"coord": "xyz_left",
-            	"head": {
-            		"type": mocap_dict[participantname]['type'],
-            		"name":  mocap_dict[participantname]['object'],
-            		"position": mocap_dict[participantname]['position'],
-            		"rotation": mocap_dict[participantname]['rotation'],
-            		"markers":
-            		[
-            			{
-            				"name": marker0name,
-            				"position": marker0pos
-            			},
-            			{
-            				"name": marker1name,
-            				"position": marker1pos
-            			},
-            			{
-            				"name": marker2name,
-            				"position": marker2pos
-            			},
-            			{
-            				"name": marker3name,
-            				"position": marker3pos
-            			}
-            		]
-            	},
-            	"glove_left": {},
-            	"glove_right": {}
-            }
+            def sendjson(participantname):
+                # Parse coordinates to float
+                def poscoordtofloat(coord):
+                    if coord != '0':
+                        x, y, z = map(float, coord[1:][:-1].split(", "))
+                        return {"x": x, "y": y, "z": z}
+                    else:
+                        return None
+                def rotcoordtofloat(coord):
+                    if coord != '0':
+                        x, y, z, w = map(float, coord[1:][:-1].split(", "))
+                        return {"x": x, "y": y, "z": z, "w": w}
+                    else:
+                        return None
 
-            key = settings['messaging']['mocap_processing']
-            participant = routing_key.rsplit('.', 1)[1]
-            routing_key = "{key}.{participant}".format(key=key, participant=participant)
-            _mq.publish(exchange='pre-processor', routing_key=routing_key, body=json_data)
+                json_data = {
+                	"frame": frame,
+                	"participant": mocap_dict[participantname]['participant'],
+                	"coord": "xyz_left",
+                	"head": {
+                		"type": mocap_dict[participantname]['type'],
+                		"name":  mocap_dict[participantname]['object'],
+                		"position": poscoordtofloat(mocap_dict[participantname]['position']),
+                		"rotation": rotcoordtofloat(mocap_dict[participantname]['rotation']),
+                		"markers":
+                		[
+                			{
+                				"name": marker0name,
+                				"position": poscoordtofloat(marker0pos)
+                			},
+                			{
+                				"name": marker1name,
+                				"position": poscoordtofloat(marker1pos)
+                			},
+                			{
+                				"name": marker2name,
+                				"position": poscoordtofloat(marker2pos)
+                			},
+                			{
+                				"name": marker3name,
+                				"position": poscoordtofloat(marker3pos)
+                			}
+                		]
+                	},
+                	"glove_left": {},
+                	"glove_right": {}
+                }
+
+                key = settings['messaging']['mocap_processing']
+                new_routing_key = "{key}.{participant}".format(key=key, participant=participantname)
+                _mq.publish(exchange='pre-processor', routing_key=new_routing_key, body=json_data)
+
+                return;
+
+            # Send for every participant
+            sendjson('white')
+            sendjson('pink')
+            sendjson('blue')
+            sendjson('orange')
+            sendjson('brown')
+            sendjson('black')
     s.close()
 
 mq = MessageQueue('mocap-preprocessor')
