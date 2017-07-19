@@ -106,7 +106,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
     thread.deamon = True
     thread.start()
 
-mq = MessageQueue()
+mq = MessageQueue('watson-asr-preprocessor')
 mq.bind_queue(
     exchange='sensors', routing_key='microphone.new_sensor.*', callback=callback
 )

@@ -12,7 +12,7 @@ SETTINGS_FILE = '../../settings.yaml'
 
 # Define server
 zmq_socket, zmq_server_addr = create_zmq_server()
-mq = MessageQueue()
+mq = MessageQueue('mocap-sensor')
 
 # Estabish la conneccion!
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())

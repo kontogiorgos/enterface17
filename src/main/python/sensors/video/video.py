@@ -20,7 +20,7 @@ port = int(sys.argv[1])
 
 UDP_IP = "127.0.0.1"
 
-mq = MessageQueue()
+mq = MessageQueue('video-sensor')
 mq.publish(
     exchange='sensors',
     routing_key='scren_capture.new_sensor.{}'.format(participant),

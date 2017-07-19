@@ -11,7 +11,7 @@ KINECT_STREAM_TIMEOUT = 10.0  # the amount of time data from the Kinect will be 
 
 zmq_socket, zmq_server_addr = create_zmq_server()
 
-mq = MessageQueue()
+mq = MessageQueue('kinect-sensor')
 
 mq.publish(
     exchange='sensors', routing_key='kinect.new_sensor.red', body={'address': zmq_server_addr, 'file_type': 'txt'}

@@ -15,7 +15,7 @@ sys.path.append('../..')
 from shared import MessageQueue
 
 
-mq = MessageQueue()
+mq = MessageQueue('kinect-listener')
 
 # define initial plotting stuff
 target_gaze_dic = {}

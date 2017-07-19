@@ -20,7 +20,7 @@ CHUNK = 2000
 zmq_socket_1, zmq_server_addr_1 = create_zmq_server()
 zmq_socket_2, zmq_server_addr_2 = create_zmq_server()
 
-mq = MessageQueue()
+mq = MessageQueue('microphone-sensor')
 
 p = pyaudio.PyAudio()
 device_index = None

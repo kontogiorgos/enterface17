@@ -177,7 +177,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
             _mq.publish(exchange='pre-processor', routing_key=routing_key, body=json_data)
     s.close()
 
-mq = MessageQueue()
+mq = MessageQueue('mocap-preprocessor')
 mq.bind_queue(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')

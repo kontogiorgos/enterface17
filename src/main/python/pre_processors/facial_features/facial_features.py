@@ -35,7 +35,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
         #ch.basic_publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=data)
     s.close()
 
-mq = MessageQueue()
+mq = MessageQueue('facial-features-preprocessor')
 mq.bind_queue(exchange='sensors', routing_key='video.new_sensor.*', callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
