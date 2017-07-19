@@ -1,4 +1,3 @@
-
 import zmq
 import pika
 import time
@@ -6,13 +5,12 @@ import msgpack
 import cv2
 import sys
 import zmq
-from PIL import Image
 import numpy as np
+import subprocess
 sys.path.append('../..')
 from shared import create_zmq_server, MessageQueue
 zmq_socket, zmq_server_addr = create_zmq_server()
-import socket
-from io import StringIO
+
 
 if len(sys.argv) != 2:
     exit('error. python video_cv.py [color]')
@@ -49,7 +47,7 @@ camera = cv2.VideoCapture(device_id)
 
 while True:
     _, frame = camera.read()
-    zmq_socket.send(msgpack.packb((frame, time.time())))
+    zmq_socket.send(msgpack.packb((frame.tolist(), time.time())))
 
 input('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
 
