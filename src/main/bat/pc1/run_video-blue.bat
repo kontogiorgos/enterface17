@@ -1,2 +1,2 @@
 cd ..\python\sensors\video
-python video.py pink 44442
+python video_cv.py blue

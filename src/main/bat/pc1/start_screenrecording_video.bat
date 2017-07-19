@@ -1,2 +1,2 @@
 cd ..\python\sensors\video
-python video.py pink 53421
+python screen_capture.py pink 53421

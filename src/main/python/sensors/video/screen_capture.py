@@ -15,16 +15,16 @@ import socket
 if len(sys.argv) != 3:
     exit('error. python video.py [color] [port]')
 participant = sys.argv[1]
-port = int(sys.argv[1])
+port = int(sys.argv[2])
 
 
 UDP_IP = "127.0.0.1"
 
-mq = MessageQueue('video-sensor')
+mq = MessageQueue('video-scren_capture-sensor')
 mq.publish(
     exchange='sensors',
     routing_key='scren_capture.new_sensor.{}'.format(participant),
-    body={'address': zmq_server_addr, 'file_type': 'video'}
+    body={'address': zmq_server_addr, 'file_type': 'ffmpeg-video'}
 )
 
 
