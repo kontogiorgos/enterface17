@@ -33,8 +33,6 @@ def callback(mq, get_shifted_time, routing_key, body):
     def run():
         global running
 
-
-
         conn = SMBConnection(
             credentials['username'],
             credentials['password'],
@@ -43,7 +41,6 @@ def callback(mq, get_shifted_time, routing_key, body):
             use_ntlm_v2 = True
         )
         assert conn.connect(settings['file_storage']['host'], settings['file_storage']['port'])
-
 
 
         try:

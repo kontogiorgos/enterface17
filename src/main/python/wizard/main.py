@@ -15,7 +15,8 @@ def say():
     mq.publish(
         exchange='wizard',
         routing_key='action.say',
-        body=json.dumps({'text': request.args.get('text', '')})
+        body={'text': request.args.get('text', '')},
+        no_time=True
     )
     return 'OK'
 
@@ -27,7 +28,8 @@ def accuse():
         mq.publish(
             exchange='wizard',
             routing_key='action.{}'.format(request.args.get('action')),
-            body=json.dumps({'participant': request.args.get('participant', '')})
+            body={'participant': request.args.get('participant', '')},
+            no_time=True
         )
         return 'OK'
     return 'NOT_OK'
