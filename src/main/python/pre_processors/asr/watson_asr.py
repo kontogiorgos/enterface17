@@ -29,9 +29,7 @@ timer = None
 last_timer = None
 
 
-
-#def callback(ch, method, properties, body):
-def callback(mq, get_shifted_time, routing_key, body):
+def callback(_mq, get_shifted_time, routing_key, body):
     participant = routing_key.rsplit('.', 1)[1]
 
     print('connected {}'.format(method.routing_key))
@@ -44,7 +42,7 @@ def callback(mq, get_shifted_time, routing_key, body):
                 context = zmq.Context()
                 s = context.socket(zmq.SUB)
                 s.setsockopt_string( zmq.SUBSCRIBE, '' )
-                s.connect(body)
+                s.connect(body.get('address'))
                 message = {
                   'action': 'start',
                   'content-type': 'audio/l16;rate=44100',
@@ -90,8 +88,7 @@ def callback(mq, get_shifted_time, routing_key, body):
                 timer = None
 
                 routing_key = 'asr.data.{}' if msg["results"][0]["final"] else 'asr.incremental_data.{}'
-                print(data, participant)
-                mq.publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=json.dumps(data))
+                _mq.publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=data)
 
 
         headers = {'X-Watson-Authorization-Token': token}
@@ -109,8 +106,8 @@ def callback(mq, get_shifted_time, routing_key, body):
     thread.deamon = True
     thread.start()
 
-mq = MessageQueue()
-mq.bind_to_queue(
+mq = MessageQueue('watson-asr-preprocessor')
+mq.bind_queue(
     exchange='sensors', routing_key='microphone.new_sensor.*', callback=callback
 )
 

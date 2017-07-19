@@ -15,40 +15,48 @@ SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Dictionaries
-mocap_dict = defaultdict(dict)
-white_dict = defaultdict(list) #glasses1
-pink_dict = defaultdict(list) #kinnect1
-blue_dict = defaultdict(list) #glasses2
-orange_dict = defaultdict(list) #kinnect2
-brown_dict = defaultdict(list) #glasses3
-black_dict = defaultdict(list) #kinnect3
-mocap_dict['white'] = white_dict
-mocap_dict['pink'] = pink_dict
-mocap_dict['blue'] = blue_dict
-mocap_dict['orange'] = orange_dict
-mocap_dict['brown'] = brown_dict
-mocap_dict['black'] = black_dict
+mocap_dict = defaultdict(lambda : defaultdict(dict))
+# white = glasses1
+mocap_dict['white']['type'] = 'glasses'
+# pink = kinnect1
+mocap_dict['pink']['type'] = 'hat'
+# blue = glasses2
+mocap_dict['blue']['type'] = 'glasses'
+# orange = kinnect2
+mocap_dict['orange']['type'] = 'hat'
+# brown = glasses3
+mocap_dict['brown']['type'] = 'glasses'
+# black = kinnect3
+mocap_dict['black']['type'] = 'hat'
 
 # Procees input data
-def callback(ch, method, properties, body):
+def callback(_mq, get_shifted_time, routing_key, body):
     print('connected!')
 
     context = zmq.Context()
     s = context.socket(zmq.SUB)
     s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
-    s.connect(body)
+    s.connect(body.get('address'))
 
     # Initiate parameters
-    frame = "0"
-    objects = "0"
-    name = "0"
-    pname = "0"
-    position = "0"
-    rotation = "0"
-    marker0 = "0"
-    marker1 = "0"
-    marker2 = "0"
-    marker3 = "0"
+    frame = None
+    objects = None
+    name = None
+    pname = None
+    position = None
+    rotation = None
+    marker0 = None
+    marker0name = None
+    marker0pos = None
+    marker1 = None
+    marker1name = None
+    marker1pos = None
+    marker2 = None
+    marker2name = None
+    marker2pos = None
+    marker3 = None
+    marker3name = None
+    marker3pos = None
 
     while True:
         data = s.recv()
@@ -64,11 +72,11 @@ def callback(ch, method, properties, body):
                 print "Frame: ", frame
 
         # Check how many objects
-        r1 = re.search('Subjects (.+?):', msgdata)
-        if r1:
-            objects = r1.group(1)
-            objects = objects[1]
-            print "Objects: ", objects
+        #r1 = re.search('Subjects (.+?):', msgdata)
+        #if r1:
+            #objects = r1.group(1)
+            #objects = objects[1]
+            #print "Objects: ", objects
 
         # Get Object No
         r2 = re.search('Subject #(.*)', msgdata)
@@ -103,88 +111,133 @@ def callback(ch, method, properties, body):
         r6 = re.search('Marker #0: (.+?) False', msgdata)
         if r6:
             marker0 = r6.group(1)
-            print "Marker 0: ", marker0
+            # Get marker 0 name
+            r6a = re.search('(.*) \(.*\)', marker0)
+            if r6a:
+                marker0name = r6a.group(1)
+                print "Marker 0 Name: ", marker0name
+            # Get marker 0 position
+            marker0pos = re.search(r'\((.*?)\)', marker0).group(1)
+            print "Marker 0 Position: ", marker0pos
 
         # Get marker 1 position
         r7 = re.search('Marker #1: (.+?) False', msgdata)
         if r7:
             marker1 = r7.group(1)
-            print "Marker 1: ", marker1
+            # Get marker 1 name
+            r7a = re.search('(.*) \(.*\)', marker1)
+            if r7a:
+                marker1name = r7a.group(1)
+                print "Marker 1 Name: ", marker1name
+            # Get marker 1 position
+            marker1pos = re.search(r'\((.*?)\)', marker1).group(1)
+            print "Marker 1 Position: ", marker1pos
 
         # Get marker 2 position
         r8 = re.search('Marker #2: (.+?) False', msgdata)
         if r8:
             marker2 = r8.group(1)
-            print "Marker 2: ", marker2
+            # Get marker 2 name
+            r8a = re.search('(.*) \(.*\)', marker2)
+            if r8a:
+                marker2name = r8a.group(1)
+                print "Marker 2 Name: ", marker2name
+            # Get marker 2 position
+            marker2pos = re.search(r'\((.*?)\)', marker2).group(1)
+            print "Marker 2 Position: ", marker2pos
 
         # Get marker 3 position
         r9 = re.search('Marker #3: (.+?) False', msgdata)
         if r9:
             marker3 = r9.group(1)
-            print "Marker 3: ", marker3
+            # Get marker 3 name
+            r9a = re.search('(.*) \(.*\)', marker3)
+            if r9a:
+                marker3name = r9a.group(1)
+                print "Marker 3 Name: ", marker3name
+            # Get marker 3 position
+            marker3pos = re.search(r'\((.*?)\)', marker3).group(1)
+            print "Marker 3 Position: ", marker3pos
 
         # Put values on a dictionary
-        if pname == 'white':
-            white_dict['position'] = position
-            white_dict['rotation'] = rotation
-            white_dict['marker0'] = marker0
-            white_dict['marker1'] = marker1
-            white_dict['marker2'] = marker2
-            white_dict['marker3'] = marker3
-        elif pname == 'brown':
-            brown_dict['position'] = position
-            brown_dict['rotation'] = rotation
-            brown_dict['marker0'] = marker0
-            brown_dict['marker1'] = marker1
-            brown_dict['marker2'] = marker2
-            brown_dict['marker3'] = marker3
+        mocap_dict[pname]['participant'] = pname
+        mocap_dict[pname]['object'] = name
+        mocap_dict[pname]['position'] = position
+        mocap_dict[pname]['rotation'] = rotation
+        mocap_dict[pname]['marker0'] = marker0
+        mocap_dict[pname]['marker1'] = marker1
+        mocap_dict[pname]['marker2'] = marker2
+        mocap_dict[pname]['marker3'] = marker3
 
         # Send processed data
         r10 = re.search('Waiting for new frame...', msgdata)
-        if r10:
+        if r10 and all(mocap_dict[pname].values()):
             # Send one by one the participant json files
-            # White
-            json_data = {
-            	"frame": frame,
-            	"participant": "red",
-            	"coord": "xyz_left",
-            	"head": {
-            		"type": "glasses",
-            		"name":  "glasses_red",
-            		"position": {"x": 209.886, "y": 2296.58, "z": 852.55},
-            		"rotation": {"x": 0.0488613, "y": -0.0312445, "z": 0.912453, "w": 0.405051},
-            		"markers":
-            		[
-            			{
-            				"name": "glasses1a",
-            				"position": {"x": 154.961, "y": 2351.84, "z": 861.614}
-            			},
-            			{
-            				"name": "glasses1c",
-            				"position": {"x": 119.116, "y": 2315.4, "z": 854.728}
-            			},
-            			{
-            				"name": "glasses1d",
-            				"position": {"x": 258.76, "y": 2203.29, "z": 842.933}
-            			},
-            			{
-            				"name": "glasses1b",
-            				"position": {"x": 282.3, "y": 2268.21, "z": 848.115}
-            			}
-            		]
-            	},
-            	"glove_left": {},
-            	"glove_right": {}
-            }
+            def sendjson(participantname):
+                # Parse coordinates to float
+                def poscoordtofloat(coord):
+                    if coord != '0':
+                        x, y, z = map(float, coord[1:][:-1].split(", "))
+                        return {"x": x, "y": y, "z": z}
+                    else:
+                        return None
+                def rotcoordtofloat(coord):
+                    if coord != '0':
+                        x, y, z, w = map(float, coord[1:][:-1].split(", "))
+                        return {"x": x, "y": y, "z": z, "w": w}
+                    else:
+                        return None
 
-            key = settings['messaging']['mocap_processing']
-            participant = method.routing_key.rsplit('.', 1)[1]
-            routing_key = "{key}.{participant}".format(key=key, participant=participant)
-            mq.publish(exchange='pre-processor', routing_key=routing_key, body=json.dumps(json_data))
+                json_data = {
+                	"frame": frame,
+                	"participant": mocap_dict[participantname]['participant'],
+                	"coord": "xyz_left",
+                	"head": {
+                		"type": mocap_dict[participantname]['type'],
+                		"name":  mocap_dict[participantname]['object'],
+                		"position": poscoordtofloat(mocap_dict[participantname]['position']),
+                		"rotation": rotcoordtofloat(mocap_dict[participantname]['rotation']),
+                		"markers":
+                		[
+                			{
+                				"name": marker0name,
+                				"position": poscoordtofloat(marker0pos)
+                			},
+                			{
+                				"name": marker1name,
+                				"position": poscoordtofloat(marker1pos)
+                			},
+                			{
+                				"name": marker2name,
+                				"position": poscoordtofloat(marker2pos)
+                			},
+                			{
+                				"name": marker3name,
+                				"position": poscoordtofloat(marker3pos)
+                			}
+                		]
+                	},
+                	"glove_left": {},
+                	"glove_right": {}
+                }
+
+                key = settings['messaging']['mocap_processing']
+                new_routing_key = "{key}.{participant}".format(key=key, participant=participantname)
+                _mq.publish(exchange='pre-processor', routing_key=new_routing_key, body=json_data)
+
+                return;
+
+            # Send for every participant
+            sendjson('white')
+            sendjson('pink')
+            sendjson('blue')
+            sendjson('orange')
+            sendjson('brown')
+            sendjson('black')
     s.close()
 
-mq = MessageQueue()
-mq.bind_to_queue(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], callback=callback)
+mq = MessageQueue('mocap-preprocessor')
+mq.bind_queue(exchange='sensors', routing_key=settings['messaging']['new_sensor_mocap'], callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
 mq.listen()

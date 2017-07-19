@@ -15,7 +15,7 @@ sys.path.append('../..')
 from shared import MessageQueue
 
 
-mq = MessageQueue()
+mq = MessageQueue('kinect-listener')
 
 # define initial plotting stuff
 target_gaze_dic = {}
@@ -23,26 +23,26 @@ time_gaze_dict = {}
 old_rt_data = ""
 
 
-def callback(ch, method, properties, body):
+def callback(_mq, get_shifted_time, routing_key, body):
 
     """
 
-    :param ch:
-    :param method:
-    :param properties:
-    :param body: address of the 0MQ server
+    :param _mq:
+    :param get_shifted_time:
+    :param routing_key:
+    :param body: json object containg address of the 0MQ server and file type of sensor
     :return:
     """
 
     context = zmq.Context()
     s = context.socket(zmq.SUB)
     s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
-    s.connect(body)
+    s.connect(body.get('address'))
     while True:
         data = s.recv()
         msgdata, timestamp = msgpack.unpackb(data, use_list=False)
         update_gaze_target_counts(msgdata['GazeCoding'], timestamp)
-        send_to_environment(msgdata['GazeCoding'], method, timestamp)
+        send_to_environment(msgdata['GazeCoding'], timestamp)
     s.close()  # do we need this?
 
 
@@ -55,16 +55,18 @@ def record_target_change(rt_data):
     old_rt_data = rt_data  # set previous data to new one
 
 
-def send_to_environment(rt_data, method, timestamp):
+def send_to_environment(rt_data, timestamp):
     global mq
     global old_rt_data
 
     if rt_data != old_rt_data:
         # gaze_change = True
-        participant = method.routing_key.rsplit('.', 1)[1]
+        participant = routing_key.rsplit('.', 1)[1]
         # kinect.append({'name': 'kinect-gaze', 'time': time.time()})
         mq.publish(
-            exchange='environment', routing_key='kinect-gaze.data.{}'.format(participant), body=json.dumps({"target_gaze_dic": target_gaze_dic, "timestamp": timestamp})
+            exchange='environment',
+            routing_key='kinect-gaze.data.{}'.format(participant),
+            body={"target_gaze_dic": target_gaze_dic, "timestamp": timestamp}
         )
         print json.dumps({"target_gaze_dic": target_gaze_dic, "timestamp": timestamp})
 
@@ -161,7 +163,7 @@ def listen():
     """
 
     global mq
-    mq.bind_to_queue(exchange='sensors', routing_key='kinect.new_sensor.*', callback=callback)
+    mq.bind_queue(exchange='sensors', routing_key='kinect.new_sensor.*', callback=callback)
 
     print('[*] Waiting for messages. To exit press CTRL+C')
     mq.listen()
