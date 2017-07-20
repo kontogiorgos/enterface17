@@ -1,8 +1,10 @@
-import pika,os
+import pika,os,sys
 
 from Player import Player
 from Game import Game
 from ruamel import yaml
+sys.path.append('../../fatima/')
+#from FAtiMA import DecisionMaking
 
 HOST = '192.168.0.100'
 PORT = 32777
@@ -16,6 +18,7 @@ class Environment(object):
     def __init__(self):
         self.settings = self._init_settings(Environment.SETTINGS_FILE)
         self.participants = Player.create_players(self.settings['players'])
+       # self.fatima = DecisionMaking()
         #self._init_subscription()
         self.game = None
 
@@ -31,6 +34,16 @@ class Environment(object):
 
     def get_participants(self):
         return self.participants
+
+    def update_fatima_knowledge_based(self):
+        '''
+        updates the fatime knowledge base for each player
+        :return:
+        '''
+        for player in self.participants:
+            self.fatima.update_knowledge_base(player)
+
+
 
     def start_game(self, game=None):
         self.game = game if game and isinstance(game, Game) else Game(Environment.SETTINGS_FILE)

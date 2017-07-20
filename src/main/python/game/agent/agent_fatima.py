@@ -33,6 +33,9 @@ class Agent(object):
         self.thread.start()
         self.fatima_mq = MessageQueue('fatima_agent')
 
+        self.gaze_at({'x':0,'y':0,'z':1})
+
+
     def listen_to_wizard_events(self):
         mq = MessageQueue('wizard_listener')
 
@@ -93,45 +96,51 @@ class Agent(object):
                     location = self.environment.get_participant(msg['participant']).get_furhat_angle()
                     self.gaze_at(location)
             if action == 'defend':
-                if get_prompt(action,prompts_dict,msg['participant']):
-                    spoken_prompt_list.append(get_prompt(action,prompts_dict,msg['participant']))
-                    self.say(get_prompt(action,prompts_dict,msg['participant']))
+                defend_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                if defend_prompt:
+                    spoken_prompt_list.append(defend_prompt)
+                    self.say(defend_prompt)
                     if random.choice(['last_speaker','defendee']) == 'last_speaker':
-                        self.gaze_at({'x':0,'y':0,'z':0})
+                        self.gaze_at({'x':0,'y':0,'z':1})
                     else:
                         location = self.environment.get_participant(msg['participant']).get_furhat_angle()
                         self.gaze_at(location)
 
             if action == 'support':
-                if get_prompt(action,prompts_dict,msg['participant']):
-                    spoken_prompt_list.append(get_prompt(action,prompts_dict,msg['participant']))
-                    self.say(get_prompt(action,prompts_dict,msg['participant']))
+                support_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                if support_prompt:
+                    spoken_prompt_list.append(support_prompt)
+                    self.say(support_prompt)
                 if msg['participant'] == 'general':
-                    self.gaze_at({'x':0,'y':0,'z':0})
+                    self.gaze_at({'x':0,'y':0,'z':1})
                 else:
                     location = self.environment.get_participant(msg['participant']).get_furhat_angle()
                     self.gaze_at(location)
 
             if action == 'vote':
-                if get_prompt(action,prompts_dict,msg['participant']):
-                    spoken_prompt_list.append(get_prompt(action,prompts_dict,msg['participant']))
-                    self.say(get_prompt(action,prompts_dict,msg['participant']))
+                vote_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                if vote_prompt:
+                    spoken_prompt_list.append(vote_prompt)
+                    self.say(vote_prompt)
                     location = self.environment.get_participant(msg['participant']).get_furhat_angle()
                     self.gaze_at(location)
 
             if action == 'small_talk':
-                if get_prompt(action,prompts_dict,msg['participant']):
-                    spoken_prompt_list.append(get_prompt(action,prompts_dict,msg['participant']))
-                    self.say(get_prompt(action,prompts_dict,msg['participant']))
-                    if msg['participant']:
+                small_talk_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                if small_talk_prompt:
+                    spoken_prompt_list.append(small_talk_prompt)
+                    self.say(small_talk_prompt)
+                    if msg['participant'] != 'general':
                         location = self.environment.get_participant(msg['participant']).get_furhat_angle()
                         self.gaze_at(location)
                     else:
-                        self.gaze_at({'x':0,'y':0,'z':0})
+                        self.gaze_at({'x':0,'y':0,'z':1})
 
             if action == 'summary':
-                self.say(get_summary())
-                spoken_prompt_list.append(get_summary())
+                summary_prompt = get_summary()
+                self.say(summary_prompt)
+                spoken_prompt_list.append(summary_prompt)
+                self.gaze_at({'x':0,'y':0,'z':1})
 
         mq.bind_queue(
             exchange='wizard', routing_key='action.*', callback=callback
