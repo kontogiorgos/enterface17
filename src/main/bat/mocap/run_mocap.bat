@@ -1,2 +1,2 @@
-cd ..\python\sensors\mocap
+cd ..\..\python\sensors\mocap
 python mocap_sensor.py
