@@ -1,4 +1,4 @@
-import pika
+import pika,os
 
 from Player import Player
 from Game import Game
@@ -10,12 +10,13 @@ PORT = 32777
 
 class Environment(object):
 
-    SETTINGS_FILE = "../settings.yaml"
+    FURHAT_HOME = "/Users/jdlopes/enterface17/src/main/python/"
+    SETTINGS_FILE = os.path.join(FURHAT_HOME,'settings_local.yaml')
 
     def __init__(self):
         self.settings = self._init_settings(Environment.SETTINGS_FILE)
         self.participants = Player.create_players(self.settings['players'])
-        self._init_subscription()
+        #self._init_subscription()
         self.game = None
 
     @staticmethod
@@ -25,29 +26,33 @@ class Environment(object):
         except:
             raise IOError("An error has occurred while trying to load settings file.")
 
-    def get_participants(self, participant_name):
-        return [x for x in self.participants if x.name == participant_name][0]
+    def get_participant(self, participant_name):
+       return [x for x in self.participants if x.name == participant_name][0]
+
+    def get_participants(self):
+        return self.participants
 
     def start_game(self, game=None):
         self.game = game if game and isinstance(game, Game) else Game(Environment.SETTINGS_FILE)
 
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
-        channel = connection.channel()
-        channel.exchange_declare(exchange='environment', type='topic')
+#        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
+#        channel = connection.channel()
+#        channel.exchange_declare(exchange='environment', type='topic')
 
-        result = channel.queue_declare(exclusive=True)
-        queue_name = result.method.queue
+#        result = channel.queue_declare(exclusive=True)
+#        queue_name = result.method.queue
 
-        channel.queue_bind(exchange='processors', queue=queue_name, routing_key='*')
+#        channel.queue_bind(exchange='processors', queue=queue_name, routing_key='*')
 
-    def _init_subscription(self):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST, port=PORT))
-        channel = connection.channel()
+ #   def _init_subscription(self):
+  #      print(HOST,PORT)
+   #     connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST, port=PORT))
+#        channel = connection.channel()
 
-        channel.queue_declare(queue='processors')
-        channel.basic_consume(self.process_processors_data, queue='processors', no_ack=True)
+#        channel.queue_declare(queue='processors')
+#        channel.basic_consume(self.process_processors_data, queue='processors', no_ack=True)
 
-        channel.start_consuming()
+#        channel.start_consuming()
 
     def process_processors_data(self, ch, method, properties, body):
         print(" [x] Received %r" % body)

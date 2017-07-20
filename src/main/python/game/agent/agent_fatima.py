@@ -31,6 +31,7 @@ class Agent(object):
         self.thread = Thread(target = self.listen_to_wizard_events)
         self.thread.deamon = True
         self.thread.start()
+        self.fatima_mq = MessageQueue('fatima_agent')
 
     def listen_to_wizard_events(self):
         mq = MessageQueue('wizard_listener')
@@ -141,10 +142,8 @@ class Agent(object):
 
     def update_belief(self):
 
-        mq = MessageQueue('fatima_agent')
-
         for player in self.environment.get_participants():
-            mq.publish(
+            self.fatima_mq.publish(
                 exchange='fatima_agent',
                 routing_key='belief_update',
                 body={'participant': player.name,
@@ -153,24 +152,32 @@ class Agent(object):
             )
 
     def get_suggest_action(self):
+        '''
+        gets the list
+        :return:
+        '''
 
-        mq = MessageQueue('fatima_agent')
         suggested_action = 'accuse pink'
         #suggested_action = get_fatima_action(env)
 
-        mq.publish(
+        self.fatima_mq.publish(
             exchange='fatima_agent',
             routing_key='suggest_action',
             body = {'action':suggested_action}
         )
 
     def get_vote_suggestion(self):
+        '''
+        gets suggestion for the voting round from fatima
+
+        :return:
+        '''
 
         mq = MessageQueue('fatima_agent')
         suggested_participant = 'blue'
         #suggested_action = get_fatima_vote(env)
 
-        mq.publish(
+        self.fatima_mq.publish(
             exchange='fatima',
             routing_key='suggest_vote',
             body={'participant' : suggested_participant}
