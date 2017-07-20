@@ -2,11 +2,15 @@ from flask import Flask, render_template, request
 import pika
 import json
 import sys
+from flask_socketio import SocketIO, send, emit
 sys.path.append('..')
 from shared import create_zmq_server, MessageQueue
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
+
 mq = MessageQueue('wizard')
 
 
@@ -35,6 +39,11 @@ def accuse():
     return 'NOT_OK'
 
 
+@socketio.on('dialog_act')
+def handle_dialog_act(json):
+    print('received json: ' + str(json))
+
+
 @app.route("/")
 def index():
     return render_template('index.html')
@@ -46,4 +55,5 @@ def visualizations():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)
+    # app.run(host='0.0.0.0', debug=True)
