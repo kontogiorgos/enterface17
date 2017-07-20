@@ -1,2 +1,2 @@
-cd ..\python\sensors\kinect
+cd ..\..\python\sensors\kinect
 python kinect.py orange

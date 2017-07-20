@@ -19,11 +19,7 @@ participant = sys.argv[1]
 
 
 mq = MessageQueue('video-webcam-sensor')
-mq.publish(
-    exchange='sensors',
-    routing_key='webcam.new_sensor.{}'.format(participant),
-    body={'address': zmq_server_addr, 'file_type': 'cv-video'}
-)
+
 
 process = subprocess.Popen(
     ["/enterface/ffmpeg-20170711-0780ad9-win64-static/bin/ffmpeg.exe", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
@@ -43,11 +39,30 @@ sorted_devices = sorted(stuff, key=lambda x: x[1])
 
 device_id = [x[0] for x in sorted_devices].index(participant)
 
+
 camera = cv2.VideoCapture(device_id)
+width = camera.get(cv2.CAP_PROP_FRAME_WIDTH)   # float
+height = camera.get(cv2.CAP_PROP_FRAME_HEIGHT) # float
+
+mq.publish(
+    exchange='sensors',
+    routing_key='video.new_sensor.{}'.format(participant),
+    body={
+        'address': zmq_server_addr,
+        'file_type': 'cv-video',
+        'img_size': {
+            'width': width,
+            'height': height,
+            'channels': 3,
+            'fps': 30,
+        }
+    }
+)
+
 
 while True:
     _, frame = camera.read()
-    zmq_socket.send(msgpack.packb((frame.tolist(), time.time())))
+    zmq_socket.send(msgpack.packb((frame.flatten().tobytes(), time.time())))
 
 input('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
 
