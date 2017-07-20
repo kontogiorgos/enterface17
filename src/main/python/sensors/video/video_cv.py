@@ -46,7 +46,7 @@ height = camera.get(cv2.CAP_PROP_FRAME_HEIGHT) # float
 
 mq.publish(
     exchange='sensors',
-    routing_key='webcam.new_sensor.{}'.format(participant),
+    routing_key='video.new_sensor.{}'.format(participant),
     body={
         'address': zmq_server_addr,
         'file_type': 'cv-video',
