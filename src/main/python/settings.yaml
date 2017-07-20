@@ -67,7 +67,6 @@ messaging:
   # time server host
   time_server_host: "tcp://192.168.0.108:45321"
 
-
   # sensor hosts
   mocap_host: "192.168.0.108"
 
@@ -83,9 +82,12 @@ messaging:
   camera: "camera"
   kinect: "kinect"
   mocap: "mocap"
+  tobii: "tobii"
 
   # new sensor
   new_sensor_mocap: "mocap.new_sensor.all"
+  new_sensor_tobii: "tobii.new_sensor.all"
 
   # pre_processing
   mocap_processing: "mocap.processing"
+  tobii_processing: "tobii.processing"
