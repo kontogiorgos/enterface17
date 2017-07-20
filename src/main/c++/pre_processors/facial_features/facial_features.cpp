@@ -188,7 +188,7 @@ int main(int argc, char * argv[]) {
         {
             for (auto au_class : aus_class)
             {
-                results[au_class.first + "_c"] = au_class.second;
+                results[au_class.first + "_c"] = au_class.second == 1;
 
                 // if(au_class.first.compare("AU28") == 0) {
                 //     setWeight(31, average(au28, count28, au_class.second));
