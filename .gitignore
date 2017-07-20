@@ -21,5 +21,10 @@ code/wizard/venv
 # outputs
 *.log
 
+# c++
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+
 .watson_credentials.json
 .smb_credentials.json

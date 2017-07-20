@@ -10,25 +10,17 @@ find_package(dlib REQUIRED)
 find_package(TBB REQUIRED)
 find_package( Boost 1.5.9 REQUIRED COMPONENTS filesystem system)
 
-
-MESSAGE("OpenCV information:")
-MESSAGE("  OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
-MESSAGE("  OpenCV_LIBRARIES: ${OpenCV_LIBRARIES}")
-MESSAGE("  OpenCV_LIBRARY_DIRS: ${OpenCV_LIBRARY_DIRS}")
-include_directories( ${OpenCV_INCLUDE_DIRS} )
-
-
+include_directories(${OpenCV_INCLUDE_DIRS} )
 include_directories(${cppzmq_INCLUDE_DIR})
 include_directories(${dlib_INCLUDE_DIRS})
 include_directories(${TBB_ROOT_DIR}/include)
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS}/boost)
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
-
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS}/boost)
 include_directories('/usr/local/include/SimpleAmqpClient')
 include_directories('/usr/local/include/msgpack')
-include_directories ("/Users/pj/Projects/PhD/Code/new_openface/lib/local/LandmarkDetector/include")
-include_directories ("/Users/pj/Projects/PhD/Code/new_openface/lib/local/FaceAnalyser/include")
+include_directories ("./include")
+
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 add_executable(facial_features facial_features.cpp)
 
