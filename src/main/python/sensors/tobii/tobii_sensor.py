@@ -29,7 +29,7 @@ settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 #time.sleep(2)
 
 # Get tobii data stream
-GLASSES_IP = "192.168.0.113"  # IPv4 address
+GLASSES_IP = ip #"192.168.0.113" # IPv4 address
 PORT = 49152
 base_url = 'http://' + GLASSES_IP
 timeout = 1

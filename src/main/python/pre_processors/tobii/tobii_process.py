@@ -10,11 +10,11 @@ from shared import MessageQueue
 import yaml
 from collections import defaultdict
 
+# Collect all participants at the same time and send 3 jsons
 # Get tobii address and participant
-if len(sys.argv) != 3:
+if len(sys.argv) != 2:
     exit('Error. Python tobii_sensor.py')
 participant = sys.argv[1]
-ip = sys.argv[2]
 
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
