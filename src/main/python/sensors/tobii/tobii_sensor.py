@@ -13,6 +13,12 @@ import json
 import threading
 import socket
 
+# Get tobii address and participant
+if len(sys.argv) != 3:
+    exit('Error. Python tobii_sensor.py')
+participant = sys.argv[1]
+ip = sys.argv[2]
+
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 
@@ -22,9 +28,17 @@ mq = MessageQueue('tobii-sensor')
 
 # Estabish la conneccion!
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
+
+if participant == 'white':
+    routing_key_p = settings['messaging']['new_sensor_tobii_1']
+elif participant == 'blue':
+    routing_key_p = settings['messaging']['new_sensor_tobii_2']
+elif participant == 'brown':
+    routing_key_p = settings['messaging']['new_sensor_tobii_3']
+
 mq.publish(
     exchange='sensors',
-    routing_key=settings['messaging']['new_sensor_tobii'],
+    routing_key=routing_key_p,
     body={'address': zmq_server_addr, 'file_type': 'txt'}
 )
 

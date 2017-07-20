@@ -1,3 +1,4 @@
+RAW
 {"ts":8826261843,"s":0,"pc":[32.85,-33.04,-30.07],"eye":"left"}
 
 {"ts":8826261843,"s":0,"pd":4.23,"eye":"left"}
@@ -89,6 +90,7 @@
 
 
 
+GATHERED
 pupil centre left---{"ts":8826281858,"s":0,"pc":[32.85,-33.04,-30.07],"eye":"left"}
 
 pupil diameter left---{"ts":8826281858,"s":0,"pd":4.22,"eye":"left"}
@@ -111,4 +113,38 @@ gyroscope---{"ts":8826332817,"s":0,"gy":[-5.530,-2.831,-1.281]}
 
 pts sync---{"ts":8826261865,"s":0,"pts":1300441,"pv":6}
 
+vts sync---{"ts":8826261865,"s":0,"vts":6401100}
+
+
+
+
+
+
+DATA
+pupil centre left---{"ts":8826281858,"s":0,"pc":[32.85,-33.04,-30.07],"eye":"left"}
+pupil centre right---{"ts":8826281858,"s":0,"pc":[-33.14,-28.15,-28.17],"eye":"right"}
+pupil diameter left---{"ts":8826281858,"s":0,"pd":4.22,"eye":"left"}
+pupil diameter right---{"ts":8826281858,"s":0,"pd":4.06,"eye":"right"}
+gaze direction left---{"ts":8826281858,"s":0,"gd":[0.0158,0.2493,0.9683],"eye":"left"}
+gaze direction right---{"ts":8826281858,"s":0,"gd":[0.1145,0.2532,0.9606],"eye":"right"}
+gaze position---{"ts":8826281858,"s":0,"l":52118,"gp":[0.4632,0.2925]}
+gaze position 3d---{"ts":8826281858,"s":0,"gp3":[43.09,136.03,610.52]}
+accelerometer---{"ts":8826326618,"s":0,"ac":[-1.530,-8.578,2.112]}
+gyroscope---{"ts":8826332817,"s":0,"gy":[-5.530,-2.831,-1.281]}
+pts sync---{"ts":8826261865,"s":0,"pts":1300441,"pv":6}
+vts sync---{"ts":8826261865,"s":0,"vts":6401100}
+
+
+
+
+
+
+TO USE
+pupil diameter left---{"ts":8826281858,"s":0,"pd":4.22,"eye":"left"}
+pupil diameter right---{"ts":8826281858,"s":0,"pd":4.06,"eye":"right"}
+gaze direction left---{"ts":8826281858,"s":0,"gd":[0.0158,0.2493,0.9683],"eye":"left"}
+gaze direction right---{"ts":8826281858,"s":0,"gd":[0.1145,0.2532,0.9606],"eye":"right"}
+gaze position---{"ts":8826281858,"s":0,"l":52118,"gp":[0.4632,0.2925]}
+gaze position 3d---{"ts":8826281858,"s":0,"gp3":[43.09,136.03,610.52]}
+pts sync---{"ts":8826261865,"s":0,"pts":1300441,"pv":6}
 vts sync---{"ts":8826261865,"s":0,"vts":6401100}

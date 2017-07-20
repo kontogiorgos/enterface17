@@ -10,24 +10,27 @@ from shared import MessageQueue
 import yaml
 from collections import defaultdict
 
+# Get tobii address and participant
+if len(sys.argv) != 3:
+    exit('Error. Python tobii_sensor.py')
+participant = sys.argv[1]
+ip = sys.argv[2]
+
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Dictionaries
-# mocap_dict = defaultdict(lambda : defaultdict(dict))
-# # white = glasses1
-# mocap_dict['white']['type'] = 'glasses'
-# # pink = kinnect1
-# mocap_dict['pink']['type'] = 'hat'
-# # blue = glasses2
-# mocap_dict['blue']['type'] = 'glasses'
-# # orange = kinnect2
-# mocap_dict['orange']['type'] = 'hat'
-# # brown = glasses3
-# mocap_dict['brown']['type'] = 'glasses'
-# # black = kinnect3
-# mocap_dict['black']['type'] = 'hat'
+tobii_dict = defaultdict(lambda : defaultdict(dict))
+# white = glasses1
+tobii_dict['white']['type'] = 'glasses1'
+# pink = kinnect1
+# blue = glasses2
+tobii_dict['blue']['type'] = 'glasses2'
+# orange = kinnect2
+# brown = glasses3
+tobii_dict['brown']['type'] = 'glasses3'
+# black = kinnect3
 
 # Procees input data
 def callback(_mq, get_shifted_time, routing_key, body):
@@ -38,7 +41,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
     s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
     s.connect(body.get('address'))
 
-    # # Initiate parameters
+    # Initiate parameters
     # frame = None
     # objects = None
     # name = None
@@ -61,9 +64,8 @@ def callback(_mq, get_shifted_time, routing_key, body):
     while True:
         data = s.recv()
         msgdata, timestamp = msgpack.unpackb(data, use_list=False)
-        print msgdata
 
-        # # Get frame
+        # Get frame
         # r0 = re.search('Frame Number: (.*)', msgdata)
         # if r0:
         #     frames = r0.group(1)
@@ -235,10 +237,19 @@ def callback(_mq, get_shifted_time, routing_key, body):
         #     sendjson('orange')
         #     sendjson('brown')
         #     sendjson('black')
+        print msgdata
     s.close()
 
 mq = MessageQueue('tobii-preprocessor')
-mq.bind_queue(exchange='sensors', routing_key=settings['messaging']['new_sensor_tobii'], callback=callback)
+
+if participant == 'white':
+    routing_key_p = settings['messaging']['new_sensor_tobii_1']
+elif participant == 'blue':
+    routing_key_p = settings['messaging']['new_sensor_tobii_2']
+elif participant == 'brown':
+    routing_key_p = settings['messaging']['new_sensor_tobii_3']
+
+mq.bind_queue(exchange='sensors', routing_key=routing_key_p, callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
 mq.listen()
