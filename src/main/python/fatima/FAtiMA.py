@@ -13,42 +13,45 @@ from IntegratedAuthoringTool.DTOs import CharacterSourceDTO
 from RolePlayCharacter import RolePlayCharacterAsset
 from RolePlayCharacter import EventHelper
 
-# Load the Scenario Configuration
-rpc_file = 'scenarios/werewolf_player.rpc'
-outputFile = 'scenarios/output.rpc'
+class DecisionMaking:
 
-# Loading the First Character From the Scenario
-rpc = RolePlayCharacterAsset.LoadFromFile(rpc_file)
-rpc.LoadAssociatedAssets()
+	def __init__(self):
+		# Load the Scenario Configuration
+		self.rpc_file = 'scenarios/werewolf_player.rpc'
+		self.outputFile = 'scenarios/output.rpc'
 
-def action_event(a1, a2, a3): 
-	evt = EventHelper.ActionEnd(a1, a2, a3)
-	rpc.Perceive(evt)
-	rpc.SaveToFile(outputFile)
-	rpc.Update()
+		# Loading the First Character From the Scenario
+		self.rpc = RolePlayCharacterAsset.LoadFromFile(self.rpc_file)
+		self.rpc.LoadAssociatedAssets()
 
-def property_change(a1, a2):
-	evt = EventHelper.PropertyChange(a1, a2, 'world')
-	rpc.Perceive(evt)
-	rpc.SaveToFile(outputFile)
-	rpc.Update()
+	def action_event(self, a1, a2, a3): 
+		evt = EventHelper.ActionEnd(a1, a2, a3)
+		self.rpc.Perceive(evt)
+		self.rpc.SaveToFile(self.outputFile)
+		self.rpc.Update()
 
-def get_accusals():
-	accusals = Counter([str(d.Target) for d in rpc.Decide()])
-	if len(accusals) > 0:
-		print "Accusals: ", accusals
-	else:
-		print "No accusals"
+	def property_change(self, a1, a2):
+		evt = EventHelper.PropertyChange(a1, a2, 'world')
+		self.rpc.Perceive(evt)
+		self.rpc.SaveToFile(self.outputFile)
+		self.rpc.Update()
 
-def update_knowledge_base(timestep, participants):
-	action_event("White", "vote", "Red")
-	property_change('GazeMostAt(Blue)', 'Red')
-	property_change('GazeMostAt(Red)', 'Blue')
-	property_change('IsDead(Blue)', 'false')
-	property_change('IsDead(Red)', 'false')
-	property_change('IsDead(White)', 'true')
-	property_change('ClosedMouth(Blue)', 'true')
-	property_change('EyesOpen(Blue)', 'true')
+	def get_accusals(self):
+		accusals = Counter([str(d.Target) for d in self.rpc.Decide()])
+		if len(accusals) > 0:
+			return accusals
+		else:
+			print "No accusals"
 
-update_knowledge_base(0, {"Blue":{"GazeMostAt":"Red", "MouthOpen":0.25}})
-get_accusals()
+	def update_knowledge_base(self, timestep, participants):
+		# Examples: Will be replaces by properties of participants
+		self.action_event("White", "vote", "Red")
+		self.property_change('GazeMostAt(Blue)', 'Red')
+		self.property_change('GazeMostAt(Red)', 'Blue')
+		self.property_change('IsDead(Blue)', 'false')
+		self.property_change('IsDead(Red)', 'false')
+		self.property_change('IsDead(White)', 'true')
+		self.property_change('ClosedMouth(Blue)', 'true')
+		self.property_change('EyesOpen(Blue)', 'true')
+
+
