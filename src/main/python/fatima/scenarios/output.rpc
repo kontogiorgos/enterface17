@@ -1,0 +1,160 @@
+{
+	"root":
+		{
+			"classId": 2,
+			"KnowledgeBase":
+				{
+					"Perspective": "Furhat",
+					"Knowledge":
+						{
+							"SELF":
+								{
+									"ClosedMouth(Blue)": "True, 1",
+									"EyesOpen(Blue)": "True, 1",
+									"GazeMostAt(Blue)": "Red, 1",
+									"GazeMostAt(Red)": "Blue, 1",
+									"IsDead(Blue)": "False, 1",
+									"IsDead(Red)": "False, 1",
+									"IsDead(White)": "True, 1"
+								}
+						}
+				},
+			"BodyName": null,
+			"VoiceName": null,
+			"EmotionalAppraisalAssetSource": null,
+			"EmotionalDecisionMakingSource": "scenarios/DecisionRulesVillager.edm",
+			"SocialImportanceAssetSource": null,
+			"CommeillFautAssetSource": null,
+			"EmotionalState":
+				{
+					"Mood": 0,
+					"initialTick": 0,
+					"EmotionalPool": [],
+					"AppraisalConfiguration":
+						{
+							"HalfLifeDecayConstant": 0.5,
+							"EmotionInfluenceOnMoodFactor": 0.3,
+							"MoodInfluenceOnEmotionFactor": 0.3,
+							"MinimumMoodValueForInfluencingEmotions": 0.5,
+							"EmotionalHalfLifeDecayTime": 15,
+							"MoodHalfLifeDecayTime": 60
+						}
+				},
+			"AutobiographicMemory":
+				{
+					"Tick": 7,
+					"records": [
+						{
+							"classId": 0,
+							"Id": 1,
+							"Type": "Action-End",
+							"Subject": "White",
+							"Timestamp": 0,
+							"Action": "vote",
+							"Target": "Red"
+						}, 
+						{
+							"classId": 1,
+							"Id": 2,
+							"Type": "Property-Change",
+							"Subject": "world",
+							"Timestamp": 1,
+							"Property": "GazeMostAt(Blue)",
+							"NewValue": "Red"
+						}, 
+						{
+							"classId": 1,
+							"Id": 3,
+							"Type": "Property-Change",
+							"Subject": "world",
+							"Timestamp": 2,
+							"Property": "GazeMostAt(Red)",
+							"NewValue": "Blue"
+						}, 
+						{
+							"classId": 1,
+							"Id": 4,
+							"Type": "Property-Change",
+							"Subject": "world",
+							"Timestamp": 3,
+							"Property": "IsDead(Blue)",
+							"NewValue": false
+						}, 
+						{
+							"classId": 1,
+							"Id": 5,
+							"Type": "Property-Change",
+							"Subject": "world",
+							"Timestamp": 4,
+							"Property": "IsDead(Red)",
+							"NewValue": false
+						}, 
+						{
+							"classId": 1,
+							"Id": 6,
+							"Type": "Property-Change",
+							"Subject": "world",
+							"Timestamp": 5,
+							"Property": "IsDead(White)",
+							"NewValue": true
+						}, 
+						{
+							"classId": 1,
+							"Id": 7,
+							"Type": "Property-Change",
+							"Subject": "world",
+							"Timestamp": 6,
+							"Property": "ClosedMouth(Blue)",
+							"NewValue": true
+						}, 
+						{
+							"classId": 1,
+							"Id": 8,
+							"Type": "Property-Change",
+							"Subject": "world",
+							"Timestamp": 7,
+							"Property": "EyesOpen(Blue)",
+							"NewValue": true
+						}]
+				},
+			"OtherAgents":
+				{
+					"dictionary": [
+						{
+							"key": "White",
+							"value":
+								{
+									"Name": "White",
+									"EmotionalState":
+										{
+											"Mood": 0,
+											"initialTick": 0,
+											"EmotionalPool": [],
+											"AppraisalConfiguration":
+												{
+													"HalfLifeDecayConstant": 0.5,
+													"EmotionInfluenceOnMoodFactor": 0.3,
+													"MoodInfluenceOnEmotionFactor": 0.3,
+													"MinimumMoodValueForInfluencingEmotions": 0.5,
+													"EmotionalHalfLifeDecayTime": 15,
+													"MoodHalfLifeDecayTime": 60
+												}
+										}
+								}
+						}]
+				}
+		},
+	"types": [
+		{
+			"TypeId": 0,
+			"ClassName": "AutobiographicMemory.AM+ActionEvent, AutobiographicMemory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+		}, 
+		{
+			"TypeId": 1,
+			"ClassName": "AutobiographicMemory.AM+PropertyChangeEvent, AutobiographicMemory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+		}, 
+		{
+			"TypeId": 2,
+			"ClassName": "RolePlayCharacter.RolePlayCharacterAsset, RolePlayCharacter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+		}]
+}
