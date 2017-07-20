@@ -243,11 +243,11 @@ def callback(_mq, get_shifted_time, routing_key, body):
 mq = MessageQueue('tobii-preprocessor')
 
 if participant == 'white':
-    routing_key_p = settings['messaging']['new_sensor_tobii_1']
+    routing_key_p = settings['messaging']['new_sensor_tobii_white']
 elif participant == 'blue':
-    routing_key_p = settings['messaging']['new_sensor_tobii_2']
+    routing_key_p = settings['messaging']['new_sensor_tobii_blue']
 elif participant == 'brown':
-    routing_key_p = settings['messaging']['new_sensor_tobii_3']
+    routing_key_p = settings['messaging']['new_sensor_tobii_brown']
 
 mq.bind_queue(exchange='sensors', routing_key=routing_key_p, callback=callback)
 

@@ -22,25 +22,8 @@ ip = sys.argv[2]
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 
-# Define server
-zmq_socket, zmq_server_addr = create_zmq_server()
-mq = MessageQueue('tobii-sensor')
-
 # Estabish la conneccion!
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
-
-if participant == 'white':
-    routing_key_p = settings['messaging']['new_sensor_tobii_1']
-elif participant == 'blue':
-    routing_key_p = settings['messaging']['new_sensor_tobii_2']
-elif participant == 'brown':
-    routing_key_p = settings['messaging']['new_sensor_tobii_3']
-
-mq.publish(
-    exchange='sensors',
-    routing_key=routing_key_p,
-    body={'address': zmq_server_addr, 'file_type': 'txt'}
-)
 
 # Wait a minute!
 #time.sleep(2)
@@ -162,6 +145,24 @@ try:
     recording_id = create_recording(participant_id)
     print ('Recording started...')
     start_recording(recording_id)
+
+    # Define server
+    zmq_socket, zmq_server_addr = create_zmq_server()
+    mq = MessageQueue('tobii-sensor')
+
+    # Check which participant
+    if participant == 'white':
+        routing_key_p = settings['messaging']['new_sensor_tobii_white']
+    elif participant == 'blue':
+        routing_key_p = settings['messaging']['new_sensor_tobii_blue']
+    elif participant == 'brown':
+        routing_key_p = settings['messaging']['new_sensor_tobii_brown']
+
+    mq.publish(
+        exchange='sensors',
+        routing_key=routing_key_p,
+        body={'address': zmq_server_addr, 'file_type': 'txt'}
+    )
 
     # Get livestreamed data
     while True:
