@@ -7,7 +7,7 @@ sys.path.append('../../')
 from GazeSense import GazeSenseSub
 from shared import create_zmq_server, MessageQueue
 
-KINECT_STREAM_TIMEOUT = 10.0  # the amount of time data from the Kinect will be sent
+KINECT_STREAM_TIMEOUT = 99999.0  # the amount of time data from the Kinect will be sent
 
 zmq_socket, zmq_server_addr = create_zmq_server()
 
