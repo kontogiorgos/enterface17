@@ -2,11 +2,6 @@ $(document).ready(function() {
     var current_page = "dialog"
 
     var socket = io.connect('http://' + document.domain + ':' + location.port);
-    // socket.on('connect', function() {
-    //
-    //     socket.emit('my event', {data: 'I\'m connected!'});
-    //
-    // });
 
     var beliefs = {
         'white': 0,
