@@ -24,7 +24,7 @@ class DecisionMaking:
 		self.rpc = RolePlayCharacterAsset.LoadFromFile(self.rpc_file)
 		self.rpc.LoadAssociatedAssets()
 
-	def action_event(self, a1, a2, a3): 
+	def action_event(self, a1, a2, a3):
 		evt = EventHelper.ActionEnd(a1, a2, a3)
 		self.rpc.Perceive(evt)
 		self.rpc.SaveToFile(self.outputFile)
@@ -41,17 +41,25 @@ class DecisionMaking:
 		if len(accusals) > 0:
 			return accusals
 		else:
-			print("No accusals")
+			print "No accusals"
 
-	def update_knowledge_base(self, timestep, participants):
-		# Examples: Will be replaces by properties of participants
-		self.action_event("White", "vote", "Red")
-		self.property_change('GazeMostAt(Blue)', 'Red')
-		self.property_change('GazeMostAt(Red)', 'Blue')
-		self.property_change('IsDead(Blue)', 'false')
-		self.property_change('IsDead(Red)', 'false')
-		self.property_change('IsDead(White)', 'true')
-		self.property_change('ClosedMouth(Blue)', 'true')
-		self.property_change('EyesOpen(Blue)', 'true')
+	def update_vote(self, player):
+		self.action_event(player.name, "vote", player.last_vote)
+
+	def update_knowledge_base(self, timestep, player):
+		self.property_change('is_alive(' + player.name + ')', str(player.is_Alive).lower())
+		for attr, value in player.properties.iteritems():
+        	self.property_change(attr + '('+ player.name + ')', value)
+        
+
+        # Examples: Will be replaces by properties of participants
+		# self.action_event("White", "vote", "Red")
+		# self.property_change('GazeMostAt(Blue)', 'Red')
+		# self.property_change('GazeMostAt(Red)', 'Blue')
+		# self.property_change('IsDead(Blue)', 'false')
+		# self.property_change('IsDead(Red)', 'false')
+		# self.property_change('IsDead(White)', 'true')
+		# self.property_change('ClosedMouth(Blue)', 'true')
+		# self.property_change('EyesOpen(Blue)', 'true')
 
 
