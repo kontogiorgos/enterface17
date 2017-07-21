@@ -26,7 +26,7 @@ running = True
 os.mkdir(log_path)
 
 def callback(mq, get_shifted_time, routing_key, body):
-
+    print('connected')
     def run():
         global running
 
@@ -37,13 +37,25 @@ def callback(mq, get_shifted_time, routing_key, body):
 
         while go_on:
             try:
-                os.mkdir('{}/{}/{}-{}'.format(log_path, session_name, routing_key, a))
+                os.mkdir(os.path.join(
+                    log_path,
+                    session_name,
+                    '{}-{}'.format(routing_key, a))
+                )
                 go_on = False
             except:
                 a += 1
 
 
-        log_file = '{}/{}/{}-{}/data.{}'.format(log_path, session_name, routing_key, a, body.get('file_type', 'unknown'))
+
+
+
+        log_file = os.path.join(
+            log_path,
+            session_name,
+            '{}-{}'.format(routing_key, a), 'data.{}'.format(body.get('file_type', 'unknown'))
+        )
+
         print('[{}] streamer connected'.format(log_file))
 
         file_obj = tempfile.NamedTemporaryFile()
@@ -65,7 +77,7 @@ def callback(mq, get_shifted_time, routing_key, body):
                 msgdata, timestamp = msgpack.unpackb(data, use_list=False)
                 file_obj.write(msgdata)
 
-                if time.time() - t >= 2:
+                if time.time() - t >= 5:
                     t = time.time()
                     file_obj.seek(0)
                     q.put((log_file, file_obj))
