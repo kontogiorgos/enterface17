@@ -90,6 +90,8 @@ class Agent(object):
             msg = body
             if action == 'say':
                 self.say(msg['text'])
+            if action == 'gesture':
+                self.gesture(msg['gesture_name'])
             if action == 'accuse':
                 if get_prompt(action,prompts_dict,msg['participant']):
                     self.say(get_prompt(action,prompts_dict,msg['participant']))
@@ -199,6 +201,10 @@ class Agent(object):
     def gaze_at(self, location):
         with connect_to_iristk(self.FURHAT_IP) as furhat_client:
             furhat_client.gaze(self.FURHAT_AGENT_NAME, location)
+
+    def gesture(self, gesture_name):
+        with connect_to_iristk(self.FURHAT_IP) as furhat_client:
+            furhat_client.gesture(self.FURHAT_AGENT_NAME, gesture_name)
 
 env = Environment.Environment()
 a = Agent(env)

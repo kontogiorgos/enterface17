@@ -14,7 +14,7 @@ $(document).ready(function() {
         if ($(event.target).attr('id') === 'name') return true;
         var keyPressed = event.key.toLowerCase();
         combo.push(keyPressed);
-        console.log(combo.sort().join('-') + ' ' + modifier + ', ' + current_page)
+        console.log(combo.sort().join('-'))
 
         if (combo.length == 2) {
             var modifier = null;
@@ -89,7 +89,6 @@ $(document).ready(function() {
         }
 
         if (current_page.indexOf('argue-vote') !== -1){
-            console.log('bone'+ ',' + keyPressed)
             switch(keyPressed){
                 case '§':
                     $.get(`/dialog_act?action=summary`)
@@ -125,6 +124,9 @@ $(document).ready(function() {
               break;
             case 'e':
               $.get('/say?text=maybe')
+              break;
+            case 'r':
+              $.get('/gesture?gesture_name=sleep')
               break;
             case 'shift':
               $('.list-group:not(#accuse)').addClass('dim');

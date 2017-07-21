@@ -34,6 +34,16 @@ def accuse():
         return 'OK'
     return 'NOT_OK'
 
+@app.route('/gesture')
+def gesture():
+    mq.publish(
+        exchange='wizard',
+        routing_key='action.gesture',
+        body={'gesture_name' : request.args.get('gesture_name','')},
+        no_time=True
+    )
+    return 'OK'
+
 
 @app.route("/")
 def index():
