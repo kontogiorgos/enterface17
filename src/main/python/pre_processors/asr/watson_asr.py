@@ -32,7 +32,7 @@ last_timer = None
 def callback(_mq, get_shifted_time, routing_key, body):
     participant = routing_key.rsplit('.', 1)[1]
 
-    print('connected {}'.format(method.routing_key))
+    print('connected {}'.format(routing_key))
 
 
     def connect_to_watson():
@@ -76,12 +76,11 @@ def callback(_mq, get_shifted_time, routing_key, body):
             print("Closed down")
 
         def on_message(ws, m):
-            print('message')
             global timer
             msg = json.loads(str(m))
             if msg.get('results'):
                 data = {
-                    'time_stat_asr': timer,
+                    'time_start_asr': timer,
                     'time_until_asr': last_timer,
                     'text': msg['results'][0].get('alternatives', [{}])[0].get('transcript')
                 }
@@ -93,13 +92,17 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
         headers = {'X-Watson-Authorization-Token': token}
 
-        ws = websocket.WebSocketApp('wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize',
-                                    header=headers,
-                                    on_message=on_message,
-                                    on_error=on_error,
-                                    on_close=on_close)
-        ws.on_open = on_open
-        ws.run_forever()
+        while True:
+            try:
+                ws = websocket.WebSocketApp('wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize',
+                                            header=headers,
+                                            on_message=on_message,
+                                            on_error=on_error,
+                                            on_close=on_close)
+                ws.on_open = on_open
+                ws.run_forever()
+            except:
+                'restarting'
 
 
     thread = Thread(target = connect_to_watson)
