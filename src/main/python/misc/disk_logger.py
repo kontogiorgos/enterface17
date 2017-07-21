@@ -3,7 +3,6 @@ import sys
 import zmq
 import msgpack
 sys.path.append('..')
-from smb.SMBConnection import SMBConnection
 from shared import MessageQueue
 import datetime
 import yaml
