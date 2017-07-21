@@ -75,7 +75,7 @@ def run():
         participant = msg['participant']
         belief = msg['belief']
         # print(participant,belief)
-        emit('update_belief_interface', {'participant': participant, 'belief': belief})
+        socketio.emit('update_belief_interface', {'participant': participant, 'belief': belief})
 
     def display_suggested_action(msg):
         # print(msg['action'])
