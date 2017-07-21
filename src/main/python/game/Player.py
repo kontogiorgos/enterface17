@@ -12,7 +12,7 @@ class Player():
         self.gaze = gaze
         self.properties = {}
         self.position = position
-        self.vote_for = None
+        self.last_vote = None
 
     @staticmethod
     def create_players(players_yaml_list):
