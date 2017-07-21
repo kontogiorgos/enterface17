@@ -10,6 +10,8 @@ from shared import MessageQueue
 import yaml
 from collections import defaultdict
 
+DEBUG = False
+
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
@@ -35,7 +37,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
     context = zmq.Context()
     s = context.socket(zmq.SUB)
-    s.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
+    s.setsockopt_string(zmq.SUBSCRIBE, '')
     s.connect(body.get('address'))
 
     # Initiate parameters
@@ -68,44 +70,45 @@ def callback(_mq, get_shifted_time, routing_key, body):
             frames = r0.group(1)
             if frames != '0':
                 frame = frames
-                print "----------------------------------------------------------------"
-                print "Frame: ", frame
+                if DEBUG:
+                    print("----------------------------------------------------------------")
+                    print("Frame: ", frame)
 
         # Check how many objects
         #r1 = re.search('Subjects (.+?):', msgdata)
         #if r1:
             #objects = r1.group(1)
             #objects = objects[1]
-            #print "Objects: ", objects
+            #print("Objects: ", objects)
 
         # Get Object No
         r2 = re.search('Subject #(.*)', msgdata)
         if r2:
             objectno = r2.group(1)
-            print "Object: ", objectno
+            if DEBUG: print("Object: ", objectno)
 
         # Get Object name
         r3 = re.search('Root Segment: (.*)', msgdata)
         if r3:
             name = r3.group(1)
-            print "Name: ", name
+            if DEBUG: print("Name: ", name)
 
             r3a = re.search('_(.*)', msgdata)
             if r3a:
                 pname = r3a.group(1)
-                print "Participant Name: ", pname
+                if DEBUG: print("Participant Name: ", pname)
 
         # Get object position
         r4 = re.search('Global Translation: (.+?) False', msgdata)
         if r4:
             position = r4.group(1)
-            print "Position: ", position
+            if DEBUG: print("Position: ", position)
 
         # Get object rotation
         r5 = re.search('Global Rotation Quaternion: (.+?) False', msgdata)
         if r5:
             rotation = r5.group(1)
-            print "Rotation: ", rotation
+            if DEBUG: print("Rotation: ", rotation)
 
         # Get marker 0 position
         r6 = re.search('Marker #0: (.+?) False', msgdata)
@@ -115,10 +118,10 @@ def callback(_mq, get_shifted_time, routing_key, body):
             r6a = re.search('(.*) \(.*\)', marker0)
             if r6a:
                 marker0name = r6a.group(1)
-                print "Marker 0 Name: ", marker0name
+                if DEBUG: print("Marker 0 Name: ", marker0name)
             # Get marker 0 position
             marker0pos = re.search(r'\((.*?)\)', marker0).group(1)
-            print "Marker 0 Position: ", marker0pos
+            if DEBUG: print("Marker 0 Position: ", marker0pos)
 
         # Get marker 1 position
         r7 = re.search('Marker #1: (.+?) False', msgdata)
@@ -128,10 +131,10 @@ def callback(_mq, get_shifted_time, routing_key, body):
             r7a = re.search('(.*) \(.*\)', marker1)
             if r7a:
                 marker1name = r7a.group(1)
-                print "Marker 1 Name: ", marker1name
+                if DEBUG: print("Marker 1 Name: ", marker1name)
             # Get marker 1 position
             marker1pos = re.search(r'\((.*?)\)', marker1).group(1)
-            print "Marker 1 Position: ", marker1pos
+            if DEBUG: print("Marker 1 Position: ", marker1pos)
 
         # Get marker 2 position
         r8 = re.search('Marker #2: (.+?) False', msgdata)
@@ -141,10 +144,10 @@ def callback(_mq, get_shifted_time, routing_key, body):
             r8a = re.search('(.*) \(.*\)', marker2)
             if r8a:
                 marker2name = r8a.group(1)
-                print "Marker 2 Name: ", marker2name
+                if DEBUG: print("Marker 2 Name: ", marker2name)
             # Get marker 2 position
             marker2pos = re.search(r'\((.*?)\)', marker2).group(1)
-            print "Marker 2 Position: ", marker2pos
+            if DEBUG: print("Marker 2 Position: ", marker2pos)
 
         # Get marker 3 position
         r9 = re.search('Marker #3: (.+?) False', msgdata)
@@ -154,10 +157,10 @@ def callback(_mq, get_shifted_time, routing_key, body):
             r9a = re.search('(.*) \(.*\)', marker3)
             if r9a:
                 marker3name = r9a.group(1)
-                print "Marker 3 Name: ", marker3name
+                if DEBUG: print("Marker 3 Name: ", marker3name)
             # Get marker 3 position
             marker3pos = re.search(r'\((.*?)\)', marker3).group(1)
-            print "Marker 3 Position: ", marker3pos
+            if DEBUG: print("Marker 3 Position: ", marker3pos)
 
         # Put values on a dictionary
         mocap_dict[pname]['participant'] = pname
