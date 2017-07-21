@@ -12,38 +12,57 @@ from shared import create_zmq_server, MessageQueue
 zmq_socket, zmq_server_addr = create_zmq_server()
 
 
-if len(sys.argv) != 2:
-    exit('error. python video_cv.py [color]')
+if len(sys.argv) != 3:
+    exit('error. python video_cv.py [color] [camera]')
 participant = sys.argv[1]
+camera_id = sys.argv[2]
 
 
 
-mq = MessageQueue('video-webcam-sensor')
 
 
-process = subprocess.Popen(
-    ["/enterface/ffmpeg-20170711-0780ad9-win64-static/bin/ffmpeg.exe", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
-    stderr=subprocess.PIPE
-)
-_, err = process.communicate()
+# process = subprocess.Popen(
+#     ["/enterface/ffmpeg-20170711-0780ad9-win64-static/bin/ffmpeg.exe", "-list_devices", "true", "-f", "dshow", "-i", "dummy"],
+#     stderr=subprocess.PIPE
+# )
+# process = subprocess.Popen(["lsusb"], stdout=subprocess.PIPE
+# )
+# out, err = process.communicate()
+# print(out)
+#
+# data = str(err)
+# stuff = [
+#     ("white", data.index("vid_046d&pid_0843&mi_00#7&371f838&0&0000")),  # white webcam
+#     ("blue", data.index("vid_046d&pid_0843&mi_00#6&c7f0d35&0&0000")),  # blue webcam
+#     ("brown", data.index("046d&pid_08c9&mi_00#7&2ea013c4&0&0000"))  # brown webcam
+# ]
+#
+# # sort by appearance
+# sorted_devices = sorted(stuff, key=lambda x: x[1])
 
-data = str(err)
-stuff = [
-    ("white", data.index("vid_046d&pid_0843&mi_00#7&371f838&0&0000")),  # white webcam
-    ("blue", data.index("vid_046d&pid_0843&mi_00#6&c7f0d35&0&0000")),  # blue webcam
-    ("brown", data.index("046d&pid_08c9&mi_00#7&2ea013c4&0&0000"))  # brown webcam
-]
+#device_id = [x[0] for x in sorted_devices].index(participant)
 
-# sort by appearance
-sorted_devices = sorted(stuff, key=lambda x: x[1])
+# for i in range(0, 4):
+#     print('device id:', i)
+#     camera = cv2.VideoCapture(i)
+#     while True:
+#         try:
+#             _, frame = camera.read()
+#             cv2.imshow('frame', frame)
+#             cv2.waitKey(1)
+#         except:
+#             break
+#     camera.release()
+#     cv2.destroyAllWindows()
+#
+#
+#
 
-device_id = [x[0] for x in sorted_devices].index(participant)
-
-
-camera = cv2.VideoCapture(device_id)
+camera = cv2.VideoCapture(camera_id)
 width = camera.get(cv2.CAP_PROP_FRAME_WIDTH)   # float
 height = camera.get(cv2.CAP_PROP_FRAME_HEIGHT) # float
 
+mq = MessageQueue('video-webcam-sensor')
 mq.publish(
     exchange='sensors',
     routing_key='video.new_sensor.{}'.format(participant),
