@@ -3,6 +3,9 @@ import csv
 import sys
 import yaml
 from collections import defaultdict
+sys.path.append('../..')
+from shared import MessageQueue
+
 
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
@@ -13,7 +16,7 @@ class FaceProcessor:
 	An object of FaceProcesser is used to iteratively collect features of
 	frames returned by the OpenFace software. Via the function 'collect_frame()'
 	one gives frame features one at a time. When it reaches a certain threshold
-	it returns higher levels features based on a set of rules for further 
+	it returns higher levels features based on a set of rules for further
 	processing.
 
 	"""
@@ -25,8 +28,8 @@ class FaceProcessor:
 
 	def update_features(self, frame):
 		"""
-		Takes a dictionary of OpenFace features of frame as input. 
-		Updates each high-level feature. 
+		Takes a dictionary of OpenFace features of frame as input.
+		Updates each high-level feature.
 		"""
 
 		if frame['AU45_c']:
@@ -44,7 +47,7 @@ class FaceProcessor:
 		Collects frames until a certain threshold, it then processes
 		the frames, returns high-levels features, and resets values.
 		"""
-		
+
 		self.frames.append(frame)
 		if len(self.frames) == self.FRAME_THRESHOLD:
 			for frame in self.frames:
@@ -56,10 +59,10 @@ class FaceProcessor:
 		else:
 			return False
 
-		
+
 	def get_highlevel_features(self):
 		"""
-		Returns processed features, used as input to logic module (FAtiMA). 
+		Returns processed features, used as input to logic module (FAtiMA).
 		"""
 		#TODO: Find out optimal format
 		data = {}
@@ -94,5 +97,3 @@ mq.bind_queue(
 
 print('[*] Waiting for messages. To exit press CTRL+C')
 mq.listen()
-
-
