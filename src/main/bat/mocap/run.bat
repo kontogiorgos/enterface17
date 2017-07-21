@@ -1,3 +1,6 @@
+REM start timeserver
+START CMD /K CALL "run_timeserver.bat"
+
 REM start mocap sensor
 REM START CMD /K CALL "mocap.bat"
 
@@ -21,9 +24,6 @@ START CMD /K CALL "run_facialfeatures.bat"
 
 REM start position processor
 START CMD /K CALL "run_position.bat"
-
-REM start timeserver
-START CMD /K CALL "run_timeserver.bat"
 
 REM start tobii blue sensor
 REM START CMD /K CALL "run_tobii-blue.bat"

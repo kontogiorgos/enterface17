@@ -115,35 +115,35 @@ try:
     data_socket = mksock(peer)
     td = threading.Timer(0, send_keepalive_msg, [data_socket, KA_DATA_MSG, peer])
     td.start()
-    print "Data socket created"
+    print("Data socket created")
 
     # Create socket which will send a keep alive message for the live video stream
     video_socket = mksock(peer)
     tv = threading.Timer(0, send_keepalive_msg, [video_socket, KA_VIDEO_MSG, peer])
     tv.start()
-    print "Video socket created"
+    print("Video socket created")
 
     project_id = create_project()
-    print "Project created", project_id
+    print("Project created", project_id)
     participant_id = create_participant(project_id)
-    print "Participant created", participant_id
+    print("Participant created", participant_id)
     calibration_id = create_calibration(project_id, participant_id)
-    print "Calibration created", calibration_id
+    print("Calibration created", calibration_id)
 
-    print "Project: " + project_id, ", Participant: ", participant_id, ", Calibration: ", calibration_id, " "
+    print("Project: " + project_id, ", Participant: ", participant_id, ", Calibration: ", calibration_id, " ")
 
     input_var = raw_input("Press enter to calibrate")
-    print ('Calibration started...')
+    print('Calibration started...')
     start_calibration(calibration_id)
     status = wait_for_status('/api/calibrations/' + calibration_id + '/status', 'ca_state', ['failed', 'calibrated'])
 
     if status == 'failed':
-        print ('Calibration failed, using default calibration instead')
+        print('Calibration failed, using default calibration instead')
     else:
-        print ('Calibration successful')
+        print('Calibration successful')
 
     recording_id = create_recording(participant_id)
-    print ('Recording started...')
+    print('Recording started...')
     start_recording(recording_id)
 
     # Define server
@@ -165,25 +165,25 @@ try:
 
         # Send each data stream
         zmq_socket.send(msgpack.packb((data, time.time())))
-        print (data)
+        print(data)
 
 finally:
     # Stop recording
     stop_recording(recording_id)
-    print "Recording Stopped"
+    print("Recording Stopped")
 
     # Check recording status
     status = wait_for_status('/api/recordings/' + recording_id + '/status', 'rec_state', ['failed', 'done'])
     if status == 'failed':
-        print ('Recording failed')
+        print('Recording failed')
     else:
-        print ('Recording successful')
+        print('Recording successful')
 
     # Send end of recording
     data = "END"
     zmq_socket.send(msgpack.packb((data, time.time())))
 
-    print "Press ctr+z to exit."
+    print("Press ctr+z to exit.")
 
 running = False
 
