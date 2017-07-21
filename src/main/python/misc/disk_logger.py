@@ -14,11 +14,6 @@ import json
 import time
 
 
-with open('.smb_credentials.json') as f:
-    credentials = json.loads(f.read())
-if not credentials:
-    exit('no credentials')
-
 SETTINGS_FILE = os.path.abspath(
     os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, 'settings.yaml')
 )
@@ -26,35 +21,30 @@ settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':', '_')
 
+log_path = os.path.join(settings['logging']['sensor_path'], session_name)
 q = queue.Queue()
 running = True
-try:
-    os.mkdir('./logger')
-except:
-    pass
+os.mkdir(log_path)
 
 def callback(mq, get_shifted_time, routing_key, body):
 
     def run():
         global running
 
-        try:
-            os.mkdir('./logger/{}'.format(session_name))
-        except:
-            print('failed making dir')
+
 
         a = 0
         go_on = True
 
         while go_on:
             try:
-                os.mkdir('./logger/{}/{}-{}'.format(session_name, routing_key, a))
+                os.mkdir('{}/{}/{}-{}'.format(log_path, session_name, routing_key, a))
                 go_on = False
             except:
                 a += 1
 
 
-        log_file = './logger/{}/{}-{}/data.{}'.format(session_name, routing_key, a, body.get('file_type', 'unknown'))
+        log_file = '{}/{}/{}-{}/data.{}'.format(log_path, session_name, routing_key, a, body.get('file_type', 'unknown'))
         print('[{}] streamer connected'.format(log_file))
 
         file_obj = tempfile.NamedTemporaryFile()

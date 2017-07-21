@@ -8,9 +8,10 @@ import sys
 sys.path.append('..')
 from shared import MessageQueue
 import yaml
+import os
 import json
 from collections import defaultdict
-
+import datetime
 
 # Settings
 SETTINGS_FILE = '../settings.yaml'
@@ -28,12 +29,21 @@ settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 files = defaultdict(lambda x: './asr-{}.txt'.format(x))
 
+
+session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':', '_')
+
+log_path = os.path.join(settings['logging']['asr_path'], session_name)
+
+os.mkdir(log_path)
+
+
+
+
 # Procees input data
 def callback(_mq, get_shifted_time, routing_key, body):
     # participant = routing_key.rsplit('.', 1)[1]
-    print('yay')
-    with open('./logs/{}.txt'.format(routing_key), 'a') as f:
-        f.write(json.dumps(body))
+    with open('{}/{}.txt'.format(log_path, routing_key), 'a') as f:
+        f.write(json.dumps(body) + '\n')
     print(routing_key, body)
     print("-------------------------------------------------")
 

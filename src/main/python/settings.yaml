@@ -61,6 +61,10 @@ file_storage:
   host: '192.168.0.103'
   port: 139
 
+logging:
+  asr_path: 'E:\logging\asr'
+  sensor_path: 'E:\logging\sensor'
+
 messaging:
 
   broker_host: "192.168.0.108"
