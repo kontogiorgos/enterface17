@@ -11,7 +11,7 @@ REM start mocap preprocessor
 START CMD /K CALL "mocap_preprocessor.bat"
 
 REM start asr preprocessor
-START CMD /K CALL "run_asr.bat"
+REM START CMD /K CALL "run_asr.bat"
 
 REM start asr logger
 START CMD /K CALL "run_asrlogger.bat"
