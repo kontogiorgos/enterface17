@@ -94,12 +94,8 @@ messaging:
 
   # new sensor
   new_sensor_mocap: "mocap.new_sensor.all"
-  new_sensor_tobii_white: "tobii.new_sensor.white"
-  new_sensor_tobii_blue: "tobii.new_sensor.blue"
-  new_sensor_tobii_brown: "tobii.new_sensor.brown"
+  new_sensor_tobii: "tobii.new_sensor"
 
   # pre_processing
   mocap_processing: "mocap.processing"
-  tobii_processing_white: "tobii.processing.white"
-  tobii_processing_blue: "tobii.processing.blue"
-  tobii_processing_brown: "tobii.processing.brown"
+  tobii_processing: "tobii.processing"

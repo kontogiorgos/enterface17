@@ -15,7 +15,7 @@ import socket
 
 # Get tobii address and participant
 if len(sys.argv) != 3:
-    exit('Error. Python tobii_sensor.py')
+    exit('Error. python tobii_sensor.py')
 participant = sys.argv[1]
 ip = sys.argv[2]
 
@@ -151,13 +151,7 @@ try:
     mq = MessageQueue('tobii-sensor')
 
     # Check which participant
-    if participant == 'white':
-        routing_key_p = settings['messaging']['new_sensor_tobii_white']
-    elif participant == 'blue':
-        routing_key_p = settings['messaging']['new_sensor_tobii_blue']
-    elif participant == 'brown':
-        routing_key_p = settings['messaging']['new_sensor_tobii_brown']
-
+    routing_key_p = '{}.{}'.format(settings['messaging']['new_sensor_tobii'], participant)
     mq.publish(
         exchange='sensors',
         routing_key=routing_key_p,

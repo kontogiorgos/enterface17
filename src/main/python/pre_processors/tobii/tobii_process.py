@@ -10,12 +10,6 @@ from shared import MessageQueue
 import yaml
 from collections import defaultdict
 
-# Collect all participants at the same time and send 3 jsons
-# Get tobii address and participant
-if len(sys.argv) != 2:
-    exit('Error. Python tobii_sensor.py')
-participant = sys.argv[1]
-
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
@@ -35,6 +29,8 @@ tobii_dict['brown']['type'] = 'glasses3'
 # Procees input data
 def callback(_mq, get_shifted_time, routing_key, body):
     print('connected!')
+
+    participant = routing_key.rsplit('.', 1)[1]
 
     context = zmq.Context()
     s = context.socket(zmq.SUB)
@@ -242,14 +238,9 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
 mq = MessageQueue('tobii-preprocessor')
 
-if participant == 'white':
-    routing_key_p = settings['messaging']['new_sensor_tobii_white']
-elif participant == 'blue':
-    routing_key_p = settings['messaging']['new_sensor_tobii_blue']
-elif participant == 'brown':
-    routing_key_p = settings['messaging']['new_sensor_tobii_brown']
+#routing_key = '{}.{}'.format(settings['messaging']['new_sensor_tobii'], participant)
 
-mq.bind_queue(exchange='sensors', routing_key=routing_key_p, callback=callback)
+mq.bind_queue(exchange='sensors', routing_key="{}.*".format(settings['messaging']['new_sensor_tobii']), callback=callback)
 
 print('[*] Waiting for messages. To exit press CTRL+C')
 mq.listen()
