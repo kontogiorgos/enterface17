@@ -12,6 +12,7 @@ class Player():
         self.gaze = gaze
         self.properties = {}
         self.position = position
+        self.last_vote = None
 
     @staticmethod
     def create_players(players_yaml_list):
@@ -37,12 +38,12 @@ class Player():
                 players.append(HumanPlayer(**player))
         return tuple(players)
 
+    #def _applyRotation():
+    #    return
 
     def get_furhat_angle(self):
-        if self.properties.get('position'):
-            return {'x': random.random(), 'y': random.random(), 'z': random.random()}
-        else:
-            return {'x': 0, 'y': 0, 'z': 0}
+
+        return self.position
 
     def get_participant_gaze(self):
         if self.gaze:
@@ -81,11 +82,10 @@ class Player():
     def vote(self, alive_players):
         pass
 
-
 class HumanPlayer(Player):
 
     def __init__(self, name, robot=False, werewolf=False, position='', gaze=(0, 0, 0)):
-        super(HumanPlayer, self).__init__(name, robot=robot, werewolf=werewolf, position='', gaze=gaze)
+        super(HumanPlayer, self).__init__(name, robot=robot, werewolf=werewolf, position=position, gaze=gaze)
 
     def vote(self, alive_players):
         return choice(alive_players)
@@ -94,7 +94,7 @@ class HumanPlayer(Player):
 class RobotPlayer(Player):
 
     def __init__(self, name, robot=False, werewolf=False, position='', gaze=(0, 0, 0)):
-        super(RobotPlayer, self).__init__(name, robot=robot, werewolf=werewolf, position='', gaze=gaze)
+        super(RobotPlayer, self).__init__(name, robot=robot, werewolf=werewolf, position=position, gaze=gaze)
 
     def vote(self, alive_players):
         return choice(alive_players)

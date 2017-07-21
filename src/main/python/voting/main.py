@@ -8,7 +8,7 @@ sys.path.append('..')
 from shared import MessageQueue
 
 SETTINGS_FILE = os.path.abspath(
-    os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, 'settings.yaml')
+    os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, 'settings_local.yaml')
 )
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
@@ -22,8 +22,9 @@ def vote():
     if participant:
         mq.publish(
             exchange=settings['messaging']['environment'],
-            routing_key='vote.{}'.format(request.args.get('action')),
-            body={'participant': request.args.get('participant', '')},
+            routing_key='action.{}'.format(request.args.get('action')),
+            body={'participant': request.args.get('participant', ''),
+                  'last_vote': request.args.get('vote_for', '')},
             no_time=True
         )
         return 'OK'

@@ -7,6 +7,11 @@ from shared import create_zmq_server, MessageQueue
 from subprocess import Popen, PIPE
 import yaml
 
+# Get platform
+if len(sys.argv) != 2:
+    exit('Error.')
+platform = sys.argv[1]
+
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 
@@ -26,7 +31,10 @@ mq.publish(
 #time.sleep(2)
 
 # Get mocap data stream
-process = Popen(['./vicon/ViconDataStreamSDK_CPPTest', settings['messaging']['mocap_host']], stdout=PIPE, stderr=PIPE)
+if platform == 'mac':
+    process = Popen(['./vicon_mac/ViconDataStreamSDK_CPPTest', settings['messaging']['mocap_host']], stdout=PIPE, stderr=PIPE)
+elif platform == 'win64':
+    process = Popen(['./vicon_windows64/ViconDataStreamSDK_CPPTest.exe', settings['messaging']['mocap_host']], stdout=PIPE, stderr=PIPE)
 
 # Send each data stream
 for stdout_line in iter(process.stdout.readline, ""):

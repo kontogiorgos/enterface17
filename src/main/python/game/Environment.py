@@ -1,8 +1,13 @@
-import pika,os
+import pika,os,sys
 
 from Player import Player
 from Game import Game
 from ruamel import yaml
+sys.path.append('../../fatima/')
+from FAtiMA import DecisionMaking
+sys.path.append('../..')
+from shared import MessageQueue
+
 
 HOST = '192.168.0.100'
 PORT = 32777
@@ -16,8 +21,10 @@ class Environment(object):
     def __init__(self):
         self.settings = self._init_settings(Environment.SETTINGS_FILE)
         self.participants = Player.create_players(self.settings['players'])
+        self.fatima = DecisionMaking()
         #self._init_subscription()
         self.game = None
+        self.mq_env = MessageQueue("environment")
 
     @staticmethod
     def _init_settings(settings_file):
@@ -32,17 +39,42 @@ class Environment(object):
     def get_participants(self):
         return self.participants
 
+
+    def listen_env(self):
+
+        def event_handler(_mq, get_shifted_time, routing_key, body):
+            action = routing_key.rsplit('.', 1)[1]
+            msg = body
+
+            participant = self.get_participant(msg['participant'])
+
+            if action == 'vote':
+                participant.last_vote = msg['last_vote']
+
+            self.fatima.update_knowledge_base(participant)
+
+
+        self.mq_env.bind_queue(
+            exchange=self.settings['messaging']['environment'], routing_key='action.*', callback=event_handler
+        )
+
+        print('[*] Waiting for messages. To exit press CTRL+C')
+        self.mq.listen()
+
+#    def update_fatima_knowledge_base(self):
+ #       '''
+ #       updates the fatima knowledge base for each player
+  #      :return:
+  #      '''
+  #      for player in self.participants:
+  #          self.fatima.update_knowledge_base(player.name)
+
+
+
     def start_game(self, game=None):
         self.game = game if game and isinstance(game, Game) else Game(Environment.SETTINGS_FILE)
 
-#        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', port=32777))
-#        channel = connection.channel()
-#        channel.exchange_declare(exchange='environment', type='topic')
 
-#        result = channel.queue_declare(exclusive=True)
-#        queue_name = result.method.queue
-
-#        channel.queue_bind(exchange='processors', queue=queue_name, routing_key='*')
 
  #   def _init_subscription(self):
   #      print(HOST,PORT)

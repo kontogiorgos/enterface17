@@ -41,7 +41,7 @@ class DecisionMaking:
 		if len(accusals) > 0:
 			return accusals
 		else:
-			print "No accusals"
+			print("No accusals")
 
 	def update_knowledge_base(self, timestep, participants):
 		# Examples: Will be replaces by properties of participants
