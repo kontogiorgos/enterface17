@@ -6,6 +6,3 @@ REM START CMD /K CALL "../screenreader_hack.bat"
 
 REM start kinect python video sensor script
 REM START CMD /K CALL "start_screenrecording_video.bat"
-
-REM start python webcam sensors
-CALL "run_webcams.bat"
