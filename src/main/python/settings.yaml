@@ -103,3 +103,5 @@ messaging:
   #processors
   tobii_processing: "tobii.processing"
   position_data: "position.data"
+  asr_watson: "asr.data"
+  dialogue_acts : "dialogue_act.data"
