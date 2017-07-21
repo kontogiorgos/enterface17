@@ -81,7 +81,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
             msg = json.loads(str(m))
             if msg.get('results'):
                 data = {
-                    'time_stat_asr': timer,
+                    'time_start_asr': timer,
                     'time_until_asr': last_timer,
                     'text': msg['results'][0].get('alternatives', [{}])[0].get('transcript')
                 }
