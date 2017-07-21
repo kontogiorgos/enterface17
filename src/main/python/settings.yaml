@@ -102,3 +102,4 @@ messaging:
 
   #processors
   tobii_processing: "tobii.processing"
+  position_data: "position.data"
