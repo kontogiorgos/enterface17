@@ -1,4 +1,6 @@
 {% extends "layout.html" %}
+{% include 'mustache_templates/beliefs.html' %}
+{% include 'mustache_templates/voting.html' %}
 {% block content %}
 <div class="row">
     <div class="col-xs-5 col-xs-offset-5">
@@ -27,6 +29,9 @@
 
     <div role="tabpanel" class="tab-pane" id="argue-vote">
         {% include 'pages/argue-vote.html' %}
+    </div>
+    <div class="row">
+        {% include 'bottom_pane.html' %}
     </div>
 
   </div>

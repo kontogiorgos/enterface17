@@ -140,10 +140,6 @@ vts sync---{"ts":8826261865,"s":0,"vts":6401100}
 
 
 TO USE
-pupil diameter left---{"ts":8826281858,"s":0,"pd":4.22,"eye":"left"}
-pupil diameter right---{"ts":8826281858,"s":0,"pd":4.06,"eye":"right"}
-gaze direction left---{"ts":8826281858,"s":0,"gd":[0.0158,0.2493,0.9683],"eye":"left"}
-gaze direction right---{"ts":8826281858,"s":0,"gd":[0.1145,0.2532,0.9606],"eye":"right"}
 gaze position---{"ts":8826281858,"s":0,"l":52118,"gp":[0.4632,0.2925]}
 gaze position 3d---{"ts":8826281858,"s":0,"gp3":[43.09,136.03,610.52]}
 pts sync---{"ts":8826261865,"s":0,"pts":1300441,"pv":6}

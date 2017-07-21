@@ -61,15 +61,42 @@ def callback(_mq, get_shifted_time, routing_key, body):
         data = s.recv()
         msgdata, timestamp = msgpack.unpackb(data, use_list=False)
 
-        # Get frame
-        # r0 = re.search('Frame Number: (.*)', msgdata)
-        # if r0:
-        #     frames = r0.group(1)
-        #     if frames != '0':
-        #         frame = frames
-        #         print "----------------------------------------------------------------"
-        #         print "Frame: ", frame
-        #
+        print "----------------------------------------------------------------"
+        # Get timestamp
+        r0 = re.search('"ts":(.*)', msgdata)
+        if r0:
+            timestamp = r0.group(1)
+            timestamp = timestamp.split(',')[0]
+            print "Timestamp: ", timestamp
+
+        # Get pupil diameter
+        r1 = re.search('"pd":(.*)', msgdata)
+        if r1:
+            r1a = re.search('"eye":"left"', msgdata)
+            r1b = re.search('"eye":"right"', msgdata)
+            if r1a:
+                pdleft = r1.group(1)
+                pdleft = pdleft.split(',')[0]
+                print "PD Left: ", pdleft
+            if r1b:
+                pdright = r1.group(1)
+                pdright = pdright.split(',')[0]
+                print "PD Right: ", pdright
+
+        # Get gaze direction
+        r2 = re.search('"gd":(.*)', msgdata)
+        if r2:
+            r2a = re.search('"eye":"left"', msgdata)
+            r2b = re.search('"eye":"right"', msgdata)
+            if r2a:
+                gdleft = r2.group(1)
+                gdleft = gdleft.split(',')[0] + "," + gdleft.split(',')[1] + "," + gdleft.split(',')[2]
+                print "GD Left: ", gdleft
+            if r2b:
+                gdright = r2.group(1)
+                gdright = gdright.split(',')[0] + "," + gdright.split(',')[1] + "," + gdright.split(',')[2]
+                print "GD Right: ", gdright
+
         # # Check how many objects
         # #r1 = re.search('Subjects (.+?):', msgdata)
         # #if r1:
@@ -233,7 +260,6 @@ def callback(_mq, get_shifted_time, routing_key, body):
         #     sendjson('orange')
         #     sendjson('brown')
         #     sendjson('black')
-        print msgdata
     s.close()
 
 mq = MessageQueue('tobii-preprocessor')

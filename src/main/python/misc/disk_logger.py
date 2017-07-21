@@ -28,38 +28,33 @@ session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':'
 
 q = queue.Queue()
 running = True
-
+try:
+    os.mkdir('./logger')
+except:
+    pass
 
 def callback(mq, get_shifted_time, routing_key, body):
+
     def run():
         global running
 
-        conn = SMBConnection(
-            credentials['username'],
-            credentials['password'],
-            credentials['client_machine_name'],
-            credentials['server_name'],
-            use_ntlm_v2 = True
-        )
-        assert conn.connect(settings['file_storage']['host'], settings['file_storage']['port'])
-
-
         try:
-            conn.createDirectory(settings['file_storage']['service_name'], '/logger/{}'.format(session_name))
+            os.mkdir('./logger/{}'.format(session_name))
         except:
-            pass
+            print('failed making dir')
 
         a = 0
         go_on = True
+
         while go_on:
             try:
-                conn.createDirectory(settings['file_storage']['service_name'], '/logger/{}/{}-{}'.format(session_name, routing_key, a))
+                os.mkdir('./logger/{}/{}-{}'.format(session_name, routing_key, a))
                 go_on = False
             except:
                 a += 1
 
-        conn.close()
-        log_file = '/logger/{}/{}-{}/data.{}'.format(session_name, routing_key, a, body.get('file_type', 'unknown'))
+
+        log_file = './logger/{}/{}-{}/data.{}'.format(session_name, routing_key, a, body.get('file_type', 'unknown'))
         print('[{}] streamer connected'.format(log_file))
 
         file_obj = tempfile.NamedTemporaryFile()
@@ -82,7 +77,6 @@ def callback(mq, get_shifted_time, routing_key, body):
                 file_obj.write(msgdata)
 
                 if time.time() - t >= 2:
-                    print('write', time.time() - t)
                     t = time.time()
                     file_obj.seek(0)
                     q.put((log_file, file_obj))
@@ -104,32 +98,13 @@ def storage_writer():
 
     while running or q.qsize() != 0:
         log_file, data = q.get()
-        trying = 5
-        while trying > 0:
-            try:
-                conn = SMBConnection(
-                    credentials['username'],
-                    credentials['password'],
-                    credentials['client_machine_name'],
-                    credentials['server_name'],
-                    use_ntlm_v2 = True
-                )
-                assert conn.connect(settings['file_storage']['host'], settings['file_storage']['port'])
-                second_file_obj = tempfile.NamedTemporaryFile()
-                second_file_obj.seek(0)
-                second_file_obj.write(data.read())
-                second_file_obj.seek(0)
-                print('writing.....')
-                conn.storeFile(settings['file_storage']['service_name'], log_file, second_file_obj)
-                print('done writing.....')
-                trying = 0
-                break
-            except:
-                print('failed')
-                time.sleep(trying/2)
-                trying -= 1
+        second_file_obj = tempfile.NamedTemporaryFile()
+        second_file_obj.seek(0)
+        second_file_obj.write(data.read())
+        second_file_obj.seek(0)
+        with open(log_file, 'ab') as f:
+            f.write(second_file_obj.read())
         print('{} writes left to do..', q.qsize())
-    conn.close()
     data.close()
     print('writer closed'.format(log_file))
 
