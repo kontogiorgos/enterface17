@@ -89,3 +89,6 @@ messaging:
 
   # pre_processing
   mocap_processing: "mocap.processing"
+  openface: "openface"
+
+  #processors
