@@ -97,6 +97,14 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 gdright = gdright.split(',')[0] + "," + gdright.split(',')[1] + "," + gdright.split(',')[2]
                 print "GD Right: ", gdright
 
+        # Get gaze position
+        r3 = re.search('"gp":(.*)', msgdata)
+        if r3:
+            gp = r3.group(1)
+            gp = gp.split(',')[0] + "," + gp.split(',')[1]
+            gp = gp.split('}')[0]
+            print "GP: ", gp
+
         # # Check how many objects
         # #r1 = re.search('Subjects (.+?):', msgdata)
         # #if r1:
