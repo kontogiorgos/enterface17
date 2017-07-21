@@ -92,7 +92,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
 mq = MessageQueue('face_processor')
 mq.bind_queue(
-    exchange=settings["messaging"]["pre-processing"], routing_key='openface.data.*', callback=callback
+    exchange=settings["messaging"]["pre_processing"], routing_key='openface.data.*', callback=callback
 )
 
 print('[*] Waiting for messages. To exit press CTRL+C')
