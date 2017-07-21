@@ -1,2 +1,2 @@
 cd ..\..\python\sensors\kinect
-python kinect.py orange
+C:\Python27\python.exe kinect.py orange

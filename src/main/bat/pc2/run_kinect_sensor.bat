@@ -1,2 +1,2 @@
 cd ..\..\python\sensors\kinect
-python kinect.py black
+C:\Python27\python.exe kinect.py black
