@@ -99,3 +99,7 @@ messaging:
   # pre_processing
   mocap_processing: "mocap.processing"
   tobii_processing: "tobii.processing"
+  asr_watson: "asr.data"
+
+  # Processors
+  dialogue_acts : "dialogue_act.data"
