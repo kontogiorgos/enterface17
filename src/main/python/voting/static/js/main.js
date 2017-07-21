@@ -19,12 +19,12 @@ $(function() {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-
+    var participant = getParameterByName('participant') || 'red';
 
     $('.btn').on('click', function () {
 
         if(confirm('are you sure you want to vote for participant ' + $(this).html() + '?')) {
-            $.get('/vote?participant=' + $(this).html().toLowerCase())
+            $.get('/vote?participant=' + participant + '&vote_for=' + $(this).html().toLowerCase())
         }
     })
 
@@ -44,7 +44,7 @@ $(function() {
     })
 
 
-    var participant = getParameterByName('participant') || 'red';
+
 
     $('#select_participant').val(participant)
     changeColors(participant)
