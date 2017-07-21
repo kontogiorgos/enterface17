@@ -39,6 +39,19 @@ class Environment(object):
     def get_participants(self):
         return self.participants
 
+    def update_accusal_data(self):
+        if self.fatima.get_accusals() != 'No accusals':
+            suspect, probabilities = self.fatima.get_accusals()
+            for player in self.participants:
+                player.properties['belief_is_werewolf'] = probabilities[player.name]
+       #     print('{} is the werewolf'.format(suspect))
+            return suspect
+        else:
+            #default behavior when there is no decision available in FAtiMA
+            for player in self.participants:
+                player.properties['belief_is_werewolf'] = 0.0
+            return ''
+
 
     def listen_env(self):
 
@@ -50,9 +63,7 @@ class Environment(object):
 
             if action == 'vote':
                 participant.last_vote = msg['last_vote']
-
-            self.fatima.update_knowledge_base(participant)
-
+                self.fatima.update_vote(participant)
 
         self.mq_env.bind_queue(
             exchange=self.settings['messaging']['environment'], routing_key='action.*', callback=event_handler

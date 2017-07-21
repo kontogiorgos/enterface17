@@ -50,7 +50,6 @@ $(document).ready(function() {
     var stop = false;
     $('html').on('keydown', function(event) {
         if (stop) return;
-        console.log(event.key)
         if ($(event.target).attr('id') === 'name') return true;
         var keyPressed = event.key.toLowerCase();
         combo.push(keyPressed);
@@ -129,6 +128,7 @@ $(document).ready(function() {
         }
 
         if (current_page.indexOf('argue-vote') !== -1){
+            $.get('/vote');
             switch(keyPressed){
                 case '§':
                     $.get(`/dialog_act?action=summary`)

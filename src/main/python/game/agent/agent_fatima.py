@@ -144,6 +144,11 @@ class Agent(object):
                 spoken_prompt_list.append(summary_prompt)
                 self.gaze_at({'x':0,'y':0,'z':1})
 
+            if action == 'get_vote':
+                self.get_vote_suggestion()
+
+            self.update_belief()
+
         mq.bind_queue(
             exchange='wizard', routing_key='action.*', callback=callback
         )
@@ -154,6 +159,9 @@ class Agent(object):
     def update_belief(self):
 
         for player in self.environment.get_participants():
+            if 'belief_is_werewolf' not in player.properties:
+                player.properties['belief_is_werewolf'] = 0.0
+
             self.fatima_mq.publish(
                 exchange='fatima_agent',
                 routing_key='belief_update',
@@ -183,16 +191,14 @@ class Agent(object):
 
         :return:
         '''
-
-        mq = MessageQueue('fatima_agent')
-        suggested_participant = 'blue'
-        #suggested_action = get_fatima_vote(env)
-
-        self.fatima_mq.publish(
-            exchange='fatima',
-            routing_key='suggest_vote',
-            body={'participant' : suggested_participant}
-        )
+        if env.update_accusal_data() != '':
+            #if there is an accusal available send it
+            self.fatima_mq.publish(
+                exchange='fatima_agent',
+                routing_key='suggest_vote',
+                body={'participant' : env.update_accusal_data()}
+                #body={'participant': 'pink'}
+            )
 
     def say(self, text):
         with connect_to_iristk(self.FURHAT_IP) as furhat_client:

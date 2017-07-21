@@ -55,11 +55,16 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/haha")
-def haha():
-    socketio.emit('display_suggested_vote', {'participant': random.choice(['white', 'blue', 'black', 'brown', 'pink', 'orange'])})
-
+@app.route("/vote")
+def vote():
+    mq.publish(
+        exchange='wizard',
+        routing_key='action.get_vote',
+        body={'participant' : request.args.get('paticipant','')},
+        no_time=True
+    )
     return 'OK'
+
 
 
 @app.route("/visualizations")
