@@ -1,6 +1,51 @@
 $(document).ready(function() {
     var current_page = "dialog"
 
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // socket.on('connect', function() {
+    //
+    //     socket.emit('my event', {data: 'I\'m connected!'});
+    //
+    // });
+
+    var beliefs = {
+        'white': 0,
+        'blue': 0,
+        'black': 0,
+        'brown': 0,
+        'pink': 0,
+        'orange': 0,
+    }
+
+    function updateVoteHtml(name) {
+      var template = $('#template-vote').html();
+      Mustache.parse(template);   // optional, speeds up future uses
+      var rendered = Mustache.render(template, {name: name});
+      $('#voting').html(rendered);
+    }
+
+    function updateBeliefHtml() {
+      var template = $('#template').html();
+      Mustache.parse(template);   // optional, speeds up future uses
+      var rendered = Mustache.render(template, {beliefs: beliefs});
+      $('#beliefs').html(rendered);
+    }
+    updateBeliefHtml();
+    updateVoteHtml('N/A')
+
+
+    socket.on('update_belief_interface', function(data) {
+      beliefs[data['participant']] = data['belief'].toFixed(2);
+      updateBeliefHtml();
+    });
+
+    socket.on('display_suggested_vote', function(data) {
+      $('#argument-vote li').css('background-color', 'white')
+      $('#argument-vote li[data-participant=' + data['participant'] + ']').css('background-color', '#FFEDCC')
+
+    });
+
+
     function reset() {
         $('.list-group').removeClass('dim');
     }

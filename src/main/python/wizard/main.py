@@ -2,11 +2,16 @@ from flask import Flask, render_template, request
 import pika
 import json
 import sys
+import random
+from threading import Thread
+from flask_socketio import SocketIO, send, emit
 sys.path.append('..')
 from shared import create_zmq_server, MessageQueue
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 mq = MessageQueue('wizard')
 
 
@@ -40,60 +45,60 @@ def index():
     return render_template('index.html')
 
 
+@app.route("/haha")
+def haha():
+    socketio.emit('display_suggested_vote', {'participant': random.choice(['white', 'blue', 'black', 'brown', 'pink', 'orange'])})
+
+    return 'OK'
+
+
 @app.route("/visualizations")
 def visualizations():
     return render_template('visualizations.html')
 
+def run():
+    print('I am running in my own thread!')
+
+    fatima_listner_mq = MessageQueue('fatima_listener')
+
+    def update_belief_interface(msg):
+        participant = msg['participant']
+        belief = msg['belief']
+        # print(participant,belief)
+        emit('update_belief_interface', {'participant': participant, 'belief': belief})
+
+    def display_suggested_action(msg):
+        # print(msg['action'])
+        socketio.emit('display_suggested_action', {'action': msg['action']})
+
+    def display_suggested_vote(msg):
+        # print(msg['participant'])
+        socketio.emit('display_suggested_vote', {'participant': msg['participant']})
+
+    def update_wizard(_mq, get_shifted_time, routing_key, body):
+
+        action = routing_key
+        msg = body
+
+        if action == 'belief_update':
+            update_belief_interface(msg)
+
+        if action == 'suggest_action':
+            display_suggested_action(msg)
+
+        if action == 'suggest_vote':
+            display_suggested_vote(msg)
+
+
+    fatima_listner_mq.bind_queue(
+        exchange='fatima_agent', routing_key='*', callback=update_wizard
+    )
+
+    print('[*] Waiting for messages. To exit press CTRL+C')
+    fatima_listner_mq.listen()
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
-
-    from threading import Thread
-
-    def run():
-        print('I am running in my own thread!')
-
-        fatima_listner_mq = MessageQueue('fatima_listener')
-
-        def update_belief_interface(msg):
-            participant = msg['participant']
-            belief = msg['belief']
-            print(participant,belief)
-            #send_to_wizard(participant,belief)
-
-        def display_suggested_action(msg):
-            print(msg['action'])
-            #send_to_wizard(msg['action'])
-
-        def display_suggested_vote(msg):
-            print(msg['participant'])
-            #send_to_wizard(msg['participant'])
-
-        def update_wizard(_mq, get_shifted_time, routing_key, body):
-
-            action = routing_key
-            msg = body
-
-            if action == 'belief_update':
-                update_belief_interface(msg)
-
-            if action == 'suggest_action':
-                display_suggested_action(msg)
-
-            if action == 'suggest_vote':
-                display_suggested_vote(msg)
-
-
-        fatima_listner_mq.bind_queue(
-            exchange='fatima_agent', routing_key='*', callback=update_wizard
-        )
-
-        print('[*] Waiting for messages. To exit press CTRL+C')
-        fatima_listner_mq.listen()
-
-
+    socketio.run(app, host='0.0.0.0', debug=True)
     thread = Thread(target=run)
     thread.deamon = True
     thread.start()
-    while True:
-        pass
