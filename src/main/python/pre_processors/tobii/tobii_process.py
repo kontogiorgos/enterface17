@@ -105,6 +105,8 @@ def callback(_mq, get_shifted_time, routing_key, body):
             gp = gp.split('}')[0]
             print "GP: ", gp
 
+        # HERE!!!!!
+
         # # Check how many objects
         # #r1 = re.search('Subjects (.+?):', msgdata)
         # #if r1:
