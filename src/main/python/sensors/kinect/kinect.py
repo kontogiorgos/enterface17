@@ -7,6 +7,10 @@ sys.path.append('../../')
 from GazeSense import GazeSenseSub
 from shared import create_zmq_server, MessageQueue
 
+if len(sys.argv) != 2:
+    exit('error. python kinect.py [participant]')
+participant = sys.argv[1]
+
 KINECT_STREAM_TIMEOUT = 99999.0  # the amount of time data from the Kinect will be sent
 
 zmq_socket, zmq_server_addr = create_zmq_server()
@@ -14,7 +18,7 @@ zmq_socket, zmq_server_addr = create_zmq_server()
 mq = MessageQueue('kinect-sensor')
 
 mq.publish(
-    exchange='sensors', routing_key='kinect.new_sensor.red', body={'address': zmq_server_addr, 'file_type': 'txt'}
+    exchange='sensors', routing_key='kinect.new_sensor.{}'.format(participant), body={'address': zmq_server_addr, 'file_type': 'txt'}
 )
 
 def my_callback(data):
