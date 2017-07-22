@@ -12,6 +12,9 @@ if len(sys.argv) != 2:
     exit('Error.')
 platform = sys.argv[1]
 
+# Print messages
+DEBUG = False
+
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 
@@ -38,7 +41,7 @@ elif platform == 'win64':
 
 # Send each data stream
 for stdout_line in iter(process.stdout.readline, ""):
-    print(stdout_line)
+    if DEBUG: print(stdout_line)
     zmq_socket.send(msgpack.packb((stdout_line, time.time())))
 
 # Print input
