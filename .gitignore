@@ -28,3 +28,4 @@ cmake_install.cmake
 
 .watson_credentials.json
 .smb_credentials.json
+src/main/c++/pre_processors/facial_features/Makefile
