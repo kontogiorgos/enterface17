@@ -29,85 +29,85 @@ session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':'
 
 log_path = os.path.join(settings['logging']['sensor_path'], session_name)
 q = queue.Queue()
-running = True
+
 os.mkdir(log_path)
 
+global_runner = True
+running = {}
+sockets = []
+
 def callback(mq, get_shifted_time, routing_key, body):
-    def run():
-        global running
+    global running
 
-        a = 0
-        go_on = True
+    a = 0
+    go_on = True
 
-        while go_on:
-            try:
-                os.mkdir(os.path.join(log_path, '{}-{}'.format(routing_key, a)))
-                go_on = False
-            except FileExistsError:
-                a += 1
-
-        log_file = os.path.join(
-            log_path,
-            '{}-{}'.format(routing_key, a), 'data.{}'.format(body.get('file_type', 'unknown'))
-        )
+    while go_on:
+        try:
+            os.mkdir(os.path.join(log_path, '{}-{}'.format(routing_key, a)))
+            go_on = False
+        except FileExistsError:
+            a += 1
 
 
-        print('[{}] streamer connected'.format(log_file))
-        with open(os.path.join(log_path, 'info.txt'), 'w') as f:
-            f.write(json.dumps(body))
 
+
+    log_file = os.path.join(
+        log_path,
+        '{}-{}'.format(routing_key, a), 'data.{}'.format(body.get('file_type', 'unknown'))
+    )
+    running[log_file] = True
+
+    print('[{}] streamer connected'.format(log_file))
+    with open(os.path.join(log_path, '{}-{}'.format(routing_key, a), 'info.txt'), 'w') as f:
+        f.write(json.dumps(body))
+
+    def run(log_file):
+        global global_runner, running
 
         context = zmq.Context()
         s = context.socket(zmq.SUB)
         s.setsockopt_string( zmq.SUBSCRIBE, '' )
         # s.RCVTIMEO = 30000
         s.connect(body['address'])
-
+        sockets.append(s)
         t = time.time()
 
         d = bytes()
-        while running:
+        while running[log_file] and global_runner:
             try:
                 data = s.recv()
                 d += data
-
-                #msgdata, timestamp = msgpack.unpackb(data, use_list=False)
-                #if type(msgdata) == dict:
-                #file_obj.write(json.dumps((msgdata, timestamp)).encode('utf-8'))
-                #else:
-                #    file_obj.write(msgdata)
-
                 if time.time() - t > 5:
-                    q.put((log_file, d))
+                    q.put(d)
                     d = bytes()
             except KeyboardInterrupt:
-                running = False
-
-
-        if d: q.put((log_file, d))
+                running[log_file] = False
+        global_runner = True
+        if d:
+            q.put(d)
 
         s.close()
         print('[{}] streamer closed'.format(log_file))
 
-    _thread = Thread(target = run)
+
+    def storage_writer(log_file):
+        global global_runner, running
+        with open(log_file, 'ab') as f:
+            while global_runner or q.qsize() != 0:
+                data = q.get()
+                f.write(data)
+                print('{} writes left to do..', q.qsize())
+        print('writer closed'.format(log_file))
+
+    _thread = Thread(target = run, args=(log_file, ))
     _thread.deamon = True
     _thread.start()
 
 
-def storage_writer():
-    global running
-
-    while running or q.qsize() != 0:
-        log_file, data = q.get()
-        with open(log_file, 'ab') as f:
-            f.write(data)
-        print('{} writes left to do..', q.qsize())
-    data.close()
-    print('writer closed'.format(log_file))
-
-thread = Thread(target = storage_writer)
-thread.deamon = True
-thread.start()
+    thread = Thread(target = storage_writer, args=(log_file, ))
+    thread.deamon = True
+    thread.start()
 
 
 mq = MessageQueue('logger')
@@ -121,6 +121,10 @@ thread2.deamon = True
 thread2.start()
 
 input('[*] Waiting for messages. To exit press enter')
-running = False
+global_runner = False
+for sock in sockets:
+    print(sock.closed)
+    if not sock.closed:
+        sock.close()
 print('ugly hack: now press CTRL-C')
 mq.stop()
