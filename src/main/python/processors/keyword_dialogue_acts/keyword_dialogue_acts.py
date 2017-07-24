@@ -8,6 +8,7 @@ from collections import defaultdict, Counter
 import nltk
 import yaml
 
+sys.path.append('../..')
 from shared import MessageQueue
 
 # Settings
@@ -19,7 +20,6 @@ PHRASE_COL_NAME = "PHRASE"
 USERNAME_PLACEHOLDER_TOKEN = "<user>"
 WHITESPACE_PATTERN = re.compile("\\s+")
 
-sys.path.append('../..')
 with open(SETTINGS_FILE, 'r') as settings_inf:
 	settings = yaml.safe_load(settings_inf)
 	env_exchange_name = settings["messaging"]["environment"]
