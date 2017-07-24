@@ -11,6 +11,7 @@ from threading import Thread
 import queue
 import json
 import time
+import shutil
 
 if len(sys.argv) != 2:
     print('No routing key given, assuming *.new_sensor.*')
@@ -28,10 +29,15 @@ settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':', '_')
 
 log_path = os.path.join(settings['logging']['sensor_path'], session_name)
+
+
+
+
+
 q = queue.Queue()
 
 os.mkdir(log_path)
-
+shutil.copy(os.path.join('..', 'settings.yaml'), os.path.join(log_path, 'settings.yaml'))
 global_runner = True
 running = {}
 sockets = []
