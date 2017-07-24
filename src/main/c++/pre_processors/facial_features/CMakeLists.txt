@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_USE_RELATIVE_PATHS TRUE)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 #find cppzmq wrapper, installed by make of cppzmq
