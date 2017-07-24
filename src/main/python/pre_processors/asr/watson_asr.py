@@ -21,7 +21,7 @@ if not credentials:
 
 
 authorization = AuthorizationV1(username=credentials['username'], password=credentials['password'])
-token = authorization.get_token(url=SpeechToTextV1.default_url)
+token = authorization.get_token(url=credentials['url'])
 
 
 
