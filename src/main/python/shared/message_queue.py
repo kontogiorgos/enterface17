@@ -67,9 +67,10 @@ class MessageQueue(object):
     def get_shifted_time(self):
         return time.time() + self.time_offset
 
-    def bind_queue(self, exchange='', routing_key='', callback=None, no_time=False):
+    def bind_queue(self, exchange='', routing_key='', callback=None, no_time=False, queue_name=None):
         result = self.channel.queue_declare(exclusive=True)
-        queue_name = result.method.queue
+        if not queue_name:
+            queue_name = result.method.queue
         self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
 
         def callback_wrapper(ch, method, properties, body):
