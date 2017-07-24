@@ -6,7 +6,6 @@ from watson_developer_cloud import AuthorizationV1
 from watson_developer_cloud import SpeechToTextV1
 import websocket
 import msgpack
-from websocket._abnf import ABNF
 import time
 from twisted.python import log
 from twisted.internet import reactor
@@ -65,7 +64,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
                     msgdata, timestamp = msgpack.unpackb(data, use_list=False)
                     if not timer: timer = timestamp
                     last_timer = timestamp
-                    ws.send(msgdata, ABNF.OPCODE_BINARY)
+                    ws.send(msgdata, websocket.ABNF.OPCODE_BINARY)
                 s.close()
                 ws.close()
                 print("thread terminating...")
