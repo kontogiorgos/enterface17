@@ -73,6 +73,8 @@ class MessageQueue(object):
         self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
 
         def callback_wrapper(ch, method, properties, body):
+            if type(body) == bytes:
+            	body = body.decode("utf-8")
             msg = json.loads(body)
             if not no_time:
                 self.timestamp(msg, 'arrived')
