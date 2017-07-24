@@ -81,14 +81,16 @@ def callback(mq, get_shifted_time, routing_key, body):
 
         d = bytes()
         while running[log_file] and global_runner:
-            try:
-                data = s.recv()
-                d += data
-                if time.time() - t > 5:
-                    q.put(d)
-                    d = bytes()
-            except KeyboardInterrupt:
+            data = s.recv()
+            if data == b'CLOSE':
+                print('close received')
                 running[log_file] = False
+                break
+            d += data
+            if time.time() - t > 5:
+                q.put(d)
+                d = bytes()
+
         global_runner = True
         if d:
             q.put(d)
