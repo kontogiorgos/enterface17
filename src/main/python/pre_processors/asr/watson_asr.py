@@ -13,17 +13,22 @@ from twisted.internet import reactor
 import sys
 sys.path.append('../..')
 from shared import MessageQueue
+import urllib.parse
 
 with open('.watson_credentials.json') as f:
     credentials = json.loads(f.read())
 if not credentials:
     exit('no credentials')
 
-
+api_base_url = credentials['url']
 authorization = AuthorizationV1(username=credentials['username'], password=credentials['password'])
-token = authorization.get_token(url=credentials['url'])
+token = authorization.get_token(url=api_base_url)
 
-
+def create_regognition_method_str(api_base_url):
+	parsed_url = urllib.parse.urlparse(api_base_url)
+	return urllib.parse.urlunparse(("wss", parsed_url.netloc, parsed_url.path + "/v1/recognize", parsed_url.params, parsed_url.query, parsed_url.fragment, ))
+	
+recognition_method_url = create_regognition_method_str(api_base_url)
 
 timer = None
 last_timer = None
@@ -94,7 +99,8 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
         while True:
             try:
-                ws = websocket.WebSocketApp('wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize',
+            	# 'wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize'
+                ws = websocket.WebSocketApp(recognition_method_url,
                                             header=headers,
                                             on_message=on_message,
                                             on_error=on_error,
