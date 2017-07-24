@@ -133,6 +133,9 @@ $(document).ready(function() {
                 case '§':
                     $.get(`/dialog_act?action=summary`)
                     break;
+                case 't':
+                    $.get(`/dialog_act?action=backchannel`)
+                    break;
                 case '1':
                     $.get(`/dialog_act?action=vote&participant=black`)
                     break;
@@ -143,10 +146,10 @@ $(document).ready(function() {
                     $.get(`/dialog_act?action=vote&participant=orange`)
                     break;
                 case '4':
-                    $.get(`/dialog_act?action=vote&participant=pink`)
+                    $.get(`/dialog_act?action=vote&participant=blue`)
                     break;
                 case '5':
-                    $.get(`/dialog_act?action=vote&participant=blue`)
+                    $.get(`/dialog_act?action=vote&participant=pink`)
                     break;
                 case '6':
                     $.get(`/dialog_act?action=vote&participant=white`)

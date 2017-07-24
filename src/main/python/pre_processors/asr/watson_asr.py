@@ -87,7 +87,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 timer = None
 
                 routing_key = 'asr.data.{}' if msg["results"][0]["final"] else 'asr.incremental_data.{}'
-                _mq.publish(exchange='pre-processor', routing_key='asr_incremental.data.{}'.format(participant), body=data)
+                _mq.publish(exchange='pre-processor', routing_key='{}.data.{}'.format(routing_key,participant), body=data)
 
 
         headers = {'X-Watson-Authorization-Token': token}
