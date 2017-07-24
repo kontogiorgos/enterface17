@@ -36,7 +36,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
     print(routing_key, body)
     print("-------------------------------------------------")
 
-mq = MessageQueue('mocap-gaze-processor')
+mq = MessageQueue('asr-logger')
 
 mq.bind_queue(exchange='pre-processor', routing_key="*.*.*", callback=callback)
 
