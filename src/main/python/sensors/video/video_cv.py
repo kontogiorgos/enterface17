@@ -7,6 +7,8 @@ import sys
 import zmq
 import numpy as np
 import subprocess
+import scipy.ndimage
+import datetime
 sys.path.append('../..')
 from shared import create_zmq_server, MessageQueue
 zmq_socket, zmq_server_addr = create_zmq_server()
@@ -57,10 +59,16 @@ camera_id = sys.argv[2]
 #
 #
 #
+fourcc = cv2.VideoWriter_fourcc(*'MP4V')
 
-camera = cv2.VideoCapture(camera_id)
+camera = cv2.VideoCapture(0)
 width = camera.get(cv2.CAP_PROP_FRAME_WIDTH)   # float
 height = camera.get(cv2.CAP_PROP_FRAME_HEIGHT) # float
+
+session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':', '_')
+out = cv2.VideoWriter('{}.mp4'.format(session_name), fourcc, 30.0, (int(width), int(height)))
+
+
 
 mq = MessageQueue('video-webcam-sensor')
 mq.publish(
@@ -77,13 +85,13 @@ mq.publish(
         }
     }
 )
+print('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
+try:
+    while True:
+        _, frame = camera.read()
+        out.write(frame)
+        zmq_socket.send(msgpack.packb((scipy.ndimage.zoom(frame, (0.5, 0.5, 1), order=0).flatten().tobytes(), time.time())))
 
-
-while True:
-    _, frame = camera.read()
-    zmq_socket.send(msgpack.packb((frame.flatten().tobytes(), time.time())))
-
-input('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
-
-
-zmq_socket.close()
+except KeyboardInterrupt:
+    zmq_socket.send(b'CLOSE')
+    zmq_socket.close()

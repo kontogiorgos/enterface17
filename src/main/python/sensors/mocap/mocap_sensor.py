@@ -39,13 +39,14 @@ if platform == 'mac':
 elif platform == 'win64':
     process = Popen(['./vicon_windows64/ViconDataStreamSDK_CPPTest.exe', settings['messaging']['mocap_host']], stdout=PIPE, stderr=PIPE)
 
+print('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
+
 # Send each data stream
-for stdout_line in iter(process.stdout.readline, ""):
-    if DEBUG: print(stdout_line)
-    zmq_socket.send(msgpack.packb((stdout_line, time.time())))
-
-# Print input
-input('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
-
-# Close connection
-zmq_socket.close()
+try:
+    for stdout_line in iter(process.stdout.readline, ""):
+        if DEBUG: print(stdout_line)
+        zmq_socket.send(msgpack.packb((stdout_line, time.time())))
+finally:
+    # Close connection
+    zmq_socket.send(b'CLOSE')
+    zmq_socket.close()

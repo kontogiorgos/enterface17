@@ -33,8 +33,8 @@ except KeyboardInterrupt:
     print("Stopping...")
 finally:
     # clean up
+    zmq_socket.send(b'CLOSE')
+    zmq_socket.close()
     gc.stop()
 
 input('[*] Sering at {}. To exit press enter'.format(zmq_server_addr))
-
-zmq_socket.close()

@@ -68,5 +68,7 @@ input('[*] Serving at {} and {}. To exit press enter'.format(zmq_server_addr_1, 
 
 stream.stop_stream()
 stream.close()
+zmq_socket_1.send(b'CLOSE')
+zmq_socket_2.send(b'CLOSE')
 zmq_socket_1.close()
 zmq_socket_2.close()
