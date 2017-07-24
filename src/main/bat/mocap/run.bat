@@ -13,12 +13,6 @@ START CMD /K CALL "mocap_preprocessor.bat"
 REM start asr preprocessor
 REM START CMD /K CALL "run_asr.bat"
 
-REM start asr logger
-START CMD /K CALL "run_asrlogger.bat"
-
-REM start disk logger
-START CMD /K CALL "run_disklogger.bat"
-
 REM start facial features processor
 START CMD /K CALL "run_facialfeatures.bat"
 
