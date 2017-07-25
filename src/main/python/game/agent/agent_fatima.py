@@ -90,7 +90,6 @@ class Agent(object):
             msg = body
             furhat_class = self.environment.get_participant('red')
             if action == 'say':
-                print("SAY!!")
                 self.say(msg['text'])
             if action == 'gesture':
                 self.gesture(msg['gesture_name'])

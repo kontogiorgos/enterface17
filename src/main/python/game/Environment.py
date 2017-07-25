@@ -49,8 +49,9 @@ class Environment(object):
         return self.participants
 
     def update_accusal_data(self):
-        if self.fatima.get_accusals() != 'No accusals':
-            suspect, probabilities = self.fatima.get_accusals()
+        accusals = self.fatima.get_accusals()
+        if accusals != 'No accusals':
+            suspect, probabilities = accusals
             for player in self.participants:
                 if player.name in probabilities:
                     player.properties['belief_is_werewolf'] = probabilities[player.name]
