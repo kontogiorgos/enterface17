@@ -13,7 +13,7 @@ if len(sys.argv) != 2:
 platform = sys.argv[1]
 
 # Print messages
-DEBUG = True
+DEBUG = False
 
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
@@ -30,9 +30,6 @@ mq.publish(
     body={'address': zmq_server_addr, 'file_type': 'txt'}
 )
 
-# Wait a minute!
-#time.sleep(2)
-
 # Get mocap data stream
 if platform == 'mac':
     process = Popen(['./vicon_mac/ViconDataStreamSDK_CPPTest', settings['messaging']['mocap_host']], stdout=PIPE, stderr=PIPE)
@@ -43,9 +40,16 @@ print('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
 
 # Send each data stream
 try:
+    frame = []
     for stdout_line in iter(process.stdout.readline, ""):
-        if DEBUG: print(stdout_line)
-        zmq_socket.send(msgpack.packb((stdout_line, time.time())))
+        #if DEBUG: print(stdout_line, "")
+        frame.append(stdout_line)
+
+        if stdout_line == 'Waiting for new frame...\n':
+            if DEBUG: print(frame)
+            zmq_socket.send(msgpack.packb((frame, time.time())))
+            frame = []
+
 finally:
     # Close connection
     zmq_socket.send(b'CLOSE')
