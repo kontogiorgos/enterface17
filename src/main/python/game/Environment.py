@@ -1,5 +1,5 @@
 import pika,os,sys
-
+from furhat import connect_to_iristk
 from Player import Player
 from Game import Game
 from ruamel import yaml
@@ -7,6 +7,7 @@ sys.path.append('../../fatima/')
 from FAtiMA import DecisionMaking
 sys.path.append('../..')
 from shared import MessageQueue
+from threading import Thread
 
 
 HOST = '192.168.0.100'
@@ -15,16 +16,24 @@ PORT = 32777
 
 class Environment(object):
 
+    FURHAT_AGENT_NAME = 'furhat6'
+    FURHAT_IP = '192.168.0.117'
     FURHAT_HOME = "/Users/jdlopes/enterface17/src/main/python/"
     SETTINGS_FILE = os.path.join(FURHAT_HOME,'settings_local.yaml')
 
     def __init__(self):
+        self.thread = Thread(target = self.listen_env)
+        self.thread.deamon = True
+        self.thread.start()
+#        self.mq = MessageQueue("environment")
+
         self.settings = self._init_settings(Environment.SETTINGS_FILE)
         self.participants = Player.create_players(self.settings['players'])
         self.fatima = DecisionMaking()
         #self._init_subscription()
         self.game = None
-        self.mq_env = MessageQueue("environment")
+        self.speaking_queue = []
+        #self.listen_env()
 
     @staticmethod
     def _init_settings(settings_file):
@@ -43,7 +52,8 @@ class Environment(object):
         if self.fatima.get_accusals() != 'No accusals':
             suspect, probabilities = self.fatima.get_accusals()
             for player in self.participants:
-                player.properties['belief_is_werewolf'] = probabilities[player.name]
+                if player.name in probabilities:
+                    player.properties['belief_is_werewolf'] = probabilities[player.name]
        #     print('{} is the werewolf'.format(suspect))
             return suspect
         else:
@@ -54,23 +64,42 @@ class Environment(object):
 
 
     def listen_env(self):
+        mq = MessageQueue("environment")
+#        print('started ')
 
         def event_handler(_mq, get_shifted_time, routing_key, body):
             action = routing_key.rsplit('.', 1)[1]
             msg = body
-
             participant = self.get_participant(msg['participant'])
 
             if action == 'vote':
                 participant.last_vote = msg['last_vote']
                 self.fatima.update_vote(participant)
 
-        self.mq_env.bind_queue(
+            if action == 'speech_active':
+                if participant not in self.speaking_queue:
+                    self.speaking_queue.append(participant)
+                if self.get_participant('red').gaze != self.speaking_queue[0]:
+                    self.get_participant('red').gaze = self.speaking_queue[0]
+                    self.gaze_at(self.speaking_queue[0].get_furhat_angle())
+
+            if action == 'end_of_speech':
+                if participant in self.speaking_queue:
+                    self.speaking_queue.remove(participant)
+                if self.speaking_queue:
+                    if self.speaking_queue[0] != self.get_participant('red').gaze:
+                        self.get_participant('red').gaze = self.speaking_queue[0]
+                        self.gaze_at(self.speaking_queue[0].get_furhat_angle())
+                else:
+                    self.gaze_at({'x':0,'y':0,'z':1})
+                    self.get_participant('red').gaze = {'x':0,'y':0,'z':1}
+
+        mq.bind_queue(
             exchange=self.settings['messaging']['environment'], routing_key='action.*', callback=event_handler
         )
 
-        print('[*] Waiting for messages. To exit press CTRL+C')
-        self.mq.listen()
+        print('[*] Waiting for environment messages. To exit press CTRL+C')
+        mq.listen()
 
 #    def update_fatima_knowledge_base(self):
  #       '''
@@ -100,6 +129,10 @@ class Environment(object):
     def process_processors_data(self, ch, method, properties, body):
         print(" [x] Received %r" % body)
 
+    def gaze_at(self, location):
+        with connect_to_iristk(self.FURHAT_IP) as furhat_client:
+            furhat_client.gaze(self.FURHAT_AGENT_NAME, location)
+
 
 def send_message(message):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST, port=PORT))
@@ -107,3 +140,4 @@ def send_message(message):
     channel.queue_declare(queue='hello')
     channel.basic_publish(exchange='', routing_key='hello', body=message)
     connection.close()
+

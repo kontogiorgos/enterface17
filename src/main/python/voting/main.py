@@ -14,6 +14,7 @@ settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 
 app = Flask(__name__)
+mq = MessageQueue("voting-app")
 #mq = MessageQueue('voting')
 
 @app.route("/vote")
@@ -22,7 +23,7 @@ def vote():
     if participant:
         mq.publish(
             exchange=settings['messaging']['environment'],
-            routing_key='action.{}'.format(request.args.get('action')),
+            routing_key='action.vote',
             body={'participant': request.args.get('participant', ''),
                   'last_vote': request.args.get('vote_for', '')},
             no_time=True
@@ -36,4 +37,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5002, debug=True)

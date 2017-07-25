@@ -15,6 +15,15 @@ socketio = SocketIO(app)
 mq = MessageQueue('wizard')
 
 
+@socketio.on("say")
+def handle_say(json):
+    mq.publish(
+        exchange='wizard',
+        routing_key='action.say',
+        body={'text': json.get('text', '')},
+        no_time=True
+    )
+
 @app.route('/say')
 def say():
     mq.publish(
@@ -74,7 +83,7 @@ def visualizations():
 def run():
     print('I am running in my own thread!')
 
-    fatima_listner_mq = MessageQueue('fatima_listener')
+    #fatima_listner_mq = MessageQueue('fatima_listener')
 
     def update_belief_interface(msg):
         participant = msg['participant']
@@ -87,10 +96,12 @@ def run():
         socketio.emit('display_suggested_action', {'action': msg['action']})
 
     def display_suggested_vote(msg):
-        # print(msg['participant'])
+        print(msg['participant'])
         socketio.emit('display_suggested_vote', {'participant': msg['participant']})
 
     def update_wizard(_mq, get_shifted_time, routing_key, body):
+
+        print('going to update wizard {}'.format(routing_key))
 
         action = routing_key
         msg = body
@@ -105,15 +116,16 @@ def run():
             display_suggested_vote(msg)
 
 
-    fatima_listner_mq.bind_queue(
-        exchange='fatima_agent', routing_key='*', callback=update_wizard
+    mq.bind_queue(
+        exchange='fatima', routing_key='*', callback=update_wizard
     )
 
-    print('[*] Waiting for messages. To exit press CTRL+C')
-    fatima_listner_mq.listen()
+    print('[*] Waiting for fatima\'s messages. To exit press CTRL+C')
+    mq.listen()
 
 if __name__ == "__main__":
-    socketio.run(app, host='0.0.0.0', debug=True)
     thread = Thread(target=run)
     thread.deamon = True
     thread.start()
+    socketio.run(app, host='0.0.0.0', debug=True, threading=True, async_mode='gevent')
+

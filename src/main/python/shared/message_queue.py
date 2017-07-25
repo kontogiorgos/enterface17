@@ -32,6 +32,8 @@ class MessageQueue(object):
         self.channel.exchange_declare(exchange=self.settings['messaging']['pre_processing'], type='topic')
         self.channel.exchange_declare(exchange=self.settings['messaging']['sensors'], type='topic')
         self.channel.exchange_declare(exchange=self.settings['messaging']['wizard'], type='topic')
+        self.channel.exchange_declare(exchange=self.settings['messaging']['environment'], type='topic')
+        self.channel.exchange_declare(exchange=self.settings['messaging']['fatima'], type='topic')
 
         self.set_time_offset()
 

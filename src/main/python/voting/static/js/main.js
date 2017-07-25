@@ -22,7 +22,7 @@ $(function() {
     var participant = getParameterByName('participant') || 'red';
 
     $('.btn').on('click', function () {
-
+        console.log(participant)
         if(confirm('are you sure you want to vote for participant ' + $(this).html() + '?')) {
             $.get('/vote?participant=' + participant + '&vote_for=' + $(this).html().toLowerCase())
         }
@@ -40,6 +40,7 @@ $(function() {
     }
 
     $('#select_participant').on('change', function() {
+        participant = $(this).val();
         changeColors($(this).val())
     })
 

@@ -77,26 +77,32 @@ class Agent(object):
                 print('no prompt available')
                 return False
 
-        def get_summary():
+        def get_prompt_action(action):
 
-            selected_prompt = random.choice(prompts_dict['summary'])
+            selected_prompt = random.choice(prompts_dict['%s'%action])
             while selected_prompt in spoken_prompt_list:
-                selected_prompt = random.choice(prompts_dict['summary'])
+                selected_prompt = random.choice(prompts_dict['%s'%action])
             return selected_prompt
 
         # Callback for wizard events. map to furhat actions
         def callback(_mq, get_shifted_time, routing_key, body):
             action = routing_key.rsplit('.', 1)[1]
             msg = body
+            furhat_class = self.environment.get_participant('red')
             if action == 'say':
+                print("SAY!!")
                 self.say(msg['text'])
             if action == 'gesture':
                 self.gesture(msg['gesture_name'])
             if action == 'accuse':
-                if get_prompt(action,prompts_dict,msg['participant']):
-                    self.say(get_prompt(action,prompts_dict,msg['participant']))
-                    location = self.environment.get_participant(msg['participant']).get_furhat_angle()
-                    self.gaze_at(location)
+                if msg['participant'] != 'general':
+                    if get_prompt(action,prompts_dict,msg['participant']):
+                        self.say(get_prompt(action,prompts_dict,msg['participant']))
+                        addressee = self.environment.get_participant(msg['participant'])
+                        furhat_class.gaze = addressee.get_furhat_angle()
+                        #location = addressee
+                        self.gaze_at(furhat_class.gaze)
+
             if action == 'defend':
                 defend_prompt = get_prompt(action,prompts_dict,msg['participant'])
                 if defend_prompt:
@@ -104,9 +110,10 @@ class Agent(object):
                     self.say(defend_prompt)
                     if random.choice(['last_speaker','defendee']) == 'last_speaker':
                         self.gaze_at({'x':0,'y':0,'z':1})
+                        furhat_class.gaze = {'x':0,'y':0,'z':1}
                     else:
-                        location = self.environment.get_participant(msg['participant']).get_furhat_angle()
-                        self.gaze_at(location)
+                        furhat_class.gaze = self.environment.get_participant(msg['participant']).get_furhat_angle()
+                        self.gaze_at(furhat_class.gaze)
 
             if action == 'support':
                 support_prompt = get_prompt(action,prompts_dict,msg['participant'])
@@ -114,18 +121,19 @@ class Agent(object):
                     spoken_prompt_list.append(support_prompt)
                     self.say(support_prompt)
                 if msg['participant'] == 'general':
-                    self.gaze_at({'x':0,'y':0,'z':1})
+                    furhat_class.gaze = {'x':0,'y':0,'z':1}
+                    self.gaze_at(furhat_class.gaze)
                 else:
-                    location = self.environment.get_participant(msg['participant']).get_furhat_angle()
-                    self.gaze_at(location)
+                    furhat_class.gaze = self.environment.get_participant(msg['participant']).get_furhat_angle()
+                    self.gaze_at(furhat_class.gaze)
 
             if action == 'vote':
                 vote_prompt = get_prompt(action,prompts_dict,msg['participant'])
                 if vote_prompt:
                     spoken_prompt_list.append(vote_prompt)
                     self.say(vote_prompt)
-                    location = self.environment.get_participant(msg['participant']).get_furhat_angle()
-                    self.gaze_at(location)
+                    furhat_class.gaze = self.environment.get_participant(msg['participant']).get_furhat_angle()
+                    self.gaze_at(furhat_class.gaze)
 
             if action == 'small_talk':
                 small_talk_prompt = get_prompt(action,prompts_dict,msg['participant'])
@@ -133,16 +141,22 @@ class Agent(object):
                     spoken_prompt_list.append(small_talk_prompt)
                     self.say(small_talk_prompt)
                     if msg['participant'] != 'general':
-                        location = self.environment.get_participant(msg['participant']).get_furhat_angle()
-                        self.gaze_at(location)
+                        furhat_class.gaze = self.environment.get_participant(msg['participant']).get_furhat_angle()
+                        self.gaze_at(furhat_class.gaze)
                     else:
-                        self.gaze_at({'x':0,'y':0,'z':1})
+                        furhat_class.gaze = {'x':0,'y':0,'z':1}
+                        self.gaze_at(furhat_class.gaze)
 
             if action == 'summary':
-                summary_prompt = get_summary()
+                summary_prompt = get_prompt_action('summary')
                 self.say(summary_prompt)
                 spoken_prompt_list.append(summary_prompt)
-                self.gaze_at({'x':0,'y':0,'z':1})
+                furhat_class.gaze = {'x':0,'y':0,'z':1}
+                self.gaze_at(furhat_class.gaze)
+
+            if action == 'backchannel':
+                backchannel_prompt = get_prompt_action('backchannel')
+                self.say(backchannel_prompt)
 
             if action == 'get_vote':
                 self.get_vote_suggestion()
@@ -158,12 +172,13 @@ class Agent(object):
 
     def update_belief(self):
 
+        env.update_accusal_data()
         for player in self.environment.get_participants():
             if 'belief_is_werewolf' not in player.properties:
                 player.properties['belief_is_werewolf'] = 0.0
 
             self.fatima_mq.publish(
-                exchange='fatima_agent',
+                exchange='fatima',
                 routing_key='belief_update',
                 body={'participant': player.name,
                       'belief': player.properties['belief_is_werewolf']},
@@ -191,12 +206,13 @@ class Agent(object):
 
         :return:
         '''
-        if env.update_accusal_data() != '':
+        accusal_data = env.update_accusal_data()
+        if accusal_data != '':
             #if there is an accusal available send it
             self.fatima_mq.publish(
-                exchange='fatima_agent',
+                exchange='fatima',
                 routing_key='suggest_vote',
-                body={'participant' : env.update_accusal_data()}
+                body={'participant' : accusal_data}
                 #body={'participant': 'pink'}
             )
 

@@ -4,12 +4,12 @@ $(document).ready(function() {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
     var beliefs = {
-        'white': 0,
-        'blue': 0,
-        'black': 0,
-        'brown': 0,
-        'pink': 0,
-        'orange': 0,
+        'white': 0.0,
+        'blue': 0.0,
+        'black': 0.0,
+        'brown': 0.0,
+        'pink': 0.0,
+        'orange': 0.0,
     }
 
     function updateVoteHtml(name) {
@@ -133,9 +133,6 @@ $(document).ready(function() {
                 case '§':
                     $.get(`/dialog_act?action=summary`)
                     break;
-                case 't':
-                    $.get(`/dialog_act?action=backchannel`)
-                    break;
                 case '1':
                     $.get(`/dialog_act?action=vote&participant=black`)
                     break;
@@ -160,7 +157,8 @@ $(document).ready(function() {
 
         switch(combo.sort().join('-')) {
             case 'q':
-              $.get('/say?text=yes');
+              socket.emit("say", {"text": "yes"})
+              //$.get('/say?text=yes');
               break;
             case 'w':
               $.get('/say?text=no')
@@ -170,6 +168,9 @@ $(document).ready(function() {
               break;
             case 'r':
               $.get('/gesture?gesture_name=sleep')
+              break;
+            case 't':
+              $.get(`/dialog_act?action=backchannel`)
               break;
             case 'shift':
               $('.list-group:not(#accuse)').addClass('dim');
