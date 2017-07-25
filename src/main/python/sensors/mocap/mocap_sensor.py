@@ -13,7 +13,7 @@ if len(sys.argv) != 2:
 platform = sys.argv[1]
 
 # Print messages
-DEBUG = False
+DEBUG = True
 
 # Settings
 SETTINGS_FILE = '../../settings.yaml'

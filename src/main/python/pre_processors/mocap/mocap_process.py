@@ -10,7 +10,7 @@ from shared import MessageQueue
 import yaml
 from collections import defaultdict
 
-DEBUG = False
+DEBUG = True
 
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
@@ -37,7 +37,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
 
     context = zmq.Context()
     s = context.socket(zmq.SUB)
-    s.setsockopt_string(zmq.SUBSCRIBE, '')
+    s.setsockopt_string(zmq.SUBSCRIBE, u'')
     s.connect(body.get('address'))
 
     # Initiate parameters

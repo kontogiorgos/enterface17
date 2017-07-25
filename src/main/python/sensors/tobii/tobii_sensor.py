@@ -114,12 +114,14 @@ try:
     # Create socket which will send a keep alive message for the live data stream
     data_socket = mksock(peer)
     td = threading.Timer(0, send_keepalive_msg, [data_socket, KA_DATA_MSG, peer])
+    td.daemon = True
     td.start()
     print("Data socket created")
 
     # Create socket which will send a keep alive message for the live video stream
     video_socket = mksock(peer)
     tv = threading.Timer(0, send_keepalive_msg, [video_socket, KA_VIDEO_MSG, peer])
+    tv.daemon = True
     tv.start()
     print("Video socket created")
 
@@ -183,12 +185,11 @@ finally:
     data = "END"
     zmq_socket.send(msgpack.packb((data, time.time())))
 
-    print("Press ctr+z to exit.")
+    # Close la conneccion
+    zmq_socket.send(b"CLOSE")
+    zmq_socket.close()
+    print("DONE")
 
 running = False
 
 # Print input
-input('[*] Serving at {}. To exit press enter'.format(zmq_server_addr))
-
-# Close la conneccion
-zmq_socket.close()
