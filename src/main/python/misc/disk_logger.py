@@ -3,7 +3,7 @@ import sys
 import zmq
 import msgpack
 sys.path.append('..')
-from shared import MessageQueue
+from shared import MessageQueue, resend_new_sensor_messages
 import datetime
 import yaml
 import os
@@ -123,16 +123,14 @@ mq.bind_queue(
     exchange='sensors', routing_key=listen_to_routing_key, callback=callback
 )
 
-
-thread2 = Thread(target = mq.listen)
-thread2.deamon = True
-thread2.start()
-
-input('[*] Waiting for messages. To exit press enter')
-global_runner = False
-for sock in sockets:
-    print(sock.closed)
-    if not sock.closed:
-        sock.close()
-print('ugly hack: now press CTRL-C')
-mq.stop()
+resend_new_sensor_messages.resend_new_sensor_messages()
+print('[*] Waiting for messages. To exit press CTRL-C')
+try:
+    mq.listen()
+finally:
+    global_runner = False
+    for sock in sockets:
+        print(sock.closed)
+        if not sock.closed:
+            sock.close()
+    mq.stop()
