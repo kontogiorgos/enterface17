@@ -16,7 +16,7 @@ SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Print messages
-DEBUG = False
+DEBUG = True
 
 # Dictionaries
 tobii_dict = defaultdict(lambda : defaultdict(dict))
