@@ -7,6 +7,8 @@ import numpy as np
 import re
 from shared import create_zmq_server, MessageQueue
 import sys
+import wave
+import datetime
 
 if len(sys.argv) != 2:
     exit('please only supply sound card name')
@@ -45,12 +47,20 @@ mq.publish(
     body={'address': zmq_server_addr_2, 'file_type': 'audio'}
 )
 
+session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':', '_') + device_names_string
+
+# Let's be on the safe side and recording this to the computer...
+waveFile = wave.open(session_name, 'wb')
+waveFile.setnchannels(CHANNELS)
+waveFile.setsampwidth(p.get_sample_size(FORMAT))
+waveFile.setframerate(RATE)
 
 def callback(in_data, frame_count, time_info, status):
     result = np.fromstring(in_data, dtype=np.uint16)
     result = np.reshape(result, (frame_count, 2))
     zmq_socket_1.send(msgpack.packb((result[:, 0].tobytes(), time.time())))
     zmq_socket_2.send(msgpack.packb((result[:, 1].tobytes(), time.time())))
+    waveFile.writeframes(in_data)
     return None, pyaudio.paContinue
 
 
@@ -63,12 +73,13 @@ stream = p.open(
     frames_per_buffer=CHUNK,
     stream_callback=callback
 )
-
-input('[*] Serving at {} and {}. To exit press enter'.format(zmq_server_addr_1, zmq_server_addr_2))
-
-stream.stop_stream()
-stream.close()
-zmq_socket_1.send(b'CLOSE')
-zmq_socket_2.send(b'CLOSE')
-zmq_socket_1.close()
-zmq_socket_2.close()
+try:
+    input('[*] Serving at {} and {}. To exit press enter'.format(zmq_server_addr_1, zmq_server_addr_2))
+finally:
+    waveFile.close()
+    stream.stop_stream()
+    stream.close()
+    zmq_socket_1.send(b'CLOSE')
+    zmq_socket_2.send(b'CLOSE')
+    zmq_socket_1.close()
+    zmq_socket_2.close()
