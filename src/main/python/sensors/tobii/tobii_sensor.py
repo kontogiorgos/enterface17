@@ -22,11 +22,11 @@ ip = sys.argv[2]
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
 
+# Print messages
+DEBUG = False
+
 # Estabish la conneccion!
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
-
-# Wait a minute!
-#time.sleep(2)
 
 # Get tobii data stream
 GLASSES_IP = ip #"192.168.0.113" # IPv4 address
@@ -160,19 +160,40 @@ try:
         body={'address': zmq_server_addr, 'file_type': 'txt'}
     )
 
+    print("Recording in progress...")
+
+    # Init pack
+    packed_data = []
+    old_ts = 0
+
     # Get livestreamed data
     while True:
         # Read live data
         data, address = data_socket.recvfrom(1024)
 
-        # Send each data stream
-        zmq_socket.send(msgpack.packb((data, time.time())))
-        print(data)
+        # Pack data by timestamp
+        if all(True if bad_candidate not in data else False for bad_candidate in ['ac', 'gy', 'pts', 'vts']):
+            new_ts = json.loads(data).get("ts")
+
+            if packed_data and new_ts != old_ts:
+                # Send data stream
+                zmq_socket.send(msgpack.packb((packed_data, time.time())))
+
+                if DEBUG:
+                    print(packed_data)
+                    print('---------------------------------------')
+
+                packed_data = []
+                old_ts = new_ts
+            elif not packed_data:
+                old_ts = new_ts
+
+            packed_data.append(data)
 
 finally:
     # Stop recording
     stop_recording(recording_id)
-    print("Recording Stopped")
+    print("Recording stopped")
 
     # Check recording status
     status = wait_for_status('/api/recordings/' + recording_id + '/status', 'rec_state', ['failed', 'done'])
@@ -191,5 +212,3 @@ finally:
     print("DONE")
 
 running = False
-
-# Print input

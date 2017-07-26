@@ -10,7 +10,7 @@ from shared import MessageQueue
 import yaml
 from collections import defaultdict
 
-DEBUG = True
+DEBUG = False
 
 # Settings
 SETTINGS_FILE = '../../settings.yaml'
@@ -33,7 +33,7 @@ mocap_dict['black']['type'] = 'hat'
 
 # Procees input data
 def callback(_mq, get_shifted_time, routing_key, body):
-    print('connected!')
+    print('Connected! Sending messages.')
 
     context = zmq.Context()
     s = context.socket(zmq.SUB)
@@ -98,18 +98,22 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 if r3a:
                     pname = r3a.group(1)
                     if DEBUG: print("Participant Name: ", pname)
+                mocap_dict[pname]['participant'] = pname
+                mocap_dict[pname]['object'] = name
 
             # Get object position
             r4 = re.search('Global Translation: (.+?) False', msgdata)
             if r4:
                 position = r4.group(1)
                 if DEBUG: print("Position: ", position)
+                mocap_dict[pname]['position'] = position
 
             # Get object rotation
             r5 = re.search('Global Rotation Quaternion: (.+?) False', msgdata)
             if r5:
                 rotation = r5.group(1)
                 if DEBUG: print("Rotation: ", rotation)
+                mocap_dict[pname]['rotation'] = rotation
 
             # Get marker 0 position
             r6 = re.search('Marker #0: (.+?) False', msgdata)
@@ -123,6 +127,8 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 # Get marker 0 position
                 marker0pos = re.search(r'\((.*?)\)', marker0).group(1)
                 if DEBUG: print("Marker 0 Position: ", marker0pos)
+                mocap_dict[pname]['marker0name'] = marker0name
+                mocap_dict[pname]['marker0pos'] = marker0pos
 
             # Get marker 1 position
             r7 = re.search('Marker #1: (.+?) False', msgdata)
@@ -136,6 +142,8 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 # Get marker 1 position
                 marker1pos = re.search(r'\((.*?)\)', marker1).group(1)
                 if DEBUG: print("Marker 1 Position: ", marker1pos)
+                mocap_dict[pname]['marker1name'] = marker1name
+                mocap_dict[pname]['marker1pos'] = marker1pos
 
             # Get marker 2 position
             r8 = re.search('Marker #2: (.+?) False', msgdata)
@@ -149,6 +157,8 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 # Get marker 2 position
                 marker2pos = re.search(r'\((.*?)\)', marker2).group(1)
                 if DEBUG: print("Marker 2 Position: ", marker2pos)
+                mocap_dict[pname]['marker2name'] = marker2name
+                mocap_dict[pname]['marker2pos'] = marker2pos
 
             # Get marker 3 position
             r9 = re.search('Marker #3: (.+?) False', msgdata)
@@ -162,16 +172,8 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 # Get marker 3 position
                 marker3pos = re.search(r'\((.*?)\)', marker3).group(1)
                 if DEBUG: print("Marker 3 Position: ", marker3pos)
-
-            # Put values on a dictionary
-            mocap_dict[pname]['participant'] = pname
-            mocap_dict[pname]['object'] = name
-            mocap_dict[pname]['position'] = position
-            mocap_dict[pname]['rotation'] = rotation
-            mocap_dict[pname]['marker0'] = marker0
-            mocap_dict[pname]['marker1'] = marker1
-            mocap_dict[pname]['marker2'] = marker2
-            mocap_dict[pname]['marker3'] = marker3
+                mocap_dict[pname]['marker3name'] = marker3name
+                mocap_dict[pname]['marker3pos'] = marker3pos
 
             # Send processed data
             r10 = re.search('Waiting for new frame...', msgdata)
@@ -180,13 +182,13 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 def sendjson(participantname):
                     # Parse coordinates to float
                     def poscoordtofloat(coord):
-                        if coord != '0':
+                        if coord and coord != '0':
                             x, y, z = map(float, coord[1:][:-1].split(", "))
                             return {"x": x, "y": y, "z": z}
                         else:
                             return None
                     def rotcoordtofloat(coord):
-                        if coord != '0':
+                        if coord and coord != '0':
                             x, y, z, w = map(float, coord[1:][:-1].split(", "))
                             return {"x": x, "y": y, "z": z, "w": w}
                         else:
@@ -204,20 +206,20 @@ def callback(_mq, get_shifted_time, routing_key, body):
                     		"markers":
                     		[
                     			{
-                    				"name": marker0name,
-                    				"position": poscoordtofloat(marker0pos)
+                    				"name": mocap_dict[participantname]['marker0name'],
+                    				"position": poscoordtofloat(mocap_dict[participantname]['marker0pos'])
                     			},
                     			{
-                    				"name": marker1name,
-                    				"position": poscoordtofloat(marker1pos)
+                    				"name": mocap_dict[participantname]['marker1name'],
+                    				"position": poscoordtofloat(mocap_dict[participantname]['marker1pos'])
                     			},
                     			{
-                    				"name": marker2name,
-                    				"position": poscoordtofloat(marker2pos)
+                    				"name": mocap_dict[participantname]['marker2name'],
+                    				"position": poscoordtofloat(mocap_dict[participantname]['marker2pos'])
                     			},
                     			{
-                    				"name": marker3name,
-                    				"position": poscoordtofloat(marker3pos)
+                    				"name": mocap_dict[participantname]['marker3name'],
+                    				"position": poscoordtofloat(mocap_dict[participantname]['marker3pos'])
                     			}
                     		]
                     	},
