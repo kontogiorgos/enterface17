@@ -17,7 +17,7 @@ zmq_socket, zmq_server_addr = create_zmq_server()
 if len(sys.argv) != 3:
     exit('error. python video_cv.py [color] [camera]')
 participant = sys.argv[1]
-camera_id = sys.argv[2]
+camera_id = int(sys.argv[2])
 
 
 
@@ -61,7 +61,7 @@ camera_id = sys.argv[2]
 #
 fourcc = cv2.VideoWriter_fourcc(*'MP4V')
 
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(camera_id)
 width = camera.get(cv2.CAP_PROP_FRAME_WIDTH)   # float
 height = camera.get(cv2.CAP_PROP_FRAME_HEIGHT) # float
 
