@@ -50,7 +50,7 @@ mq.publish(
 session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':', '_') + device_names_string
 
 # Let's be on the safe side and recording this to the computer...
-waveFile = wave.open(session_name, 'wb')
+waveFile = wave.open('{}.wav'.format(session_name), 'wb')
 waveFile.setnchannels(CHANNELS)
 waveFile.setsampwidth(p.get_sample_size(FORMAT))
 waveFile.setframerate(RATE)
