@@ -83,7 +83,7 @@ messaging:
   connection_server_host: "tcp://192.168.0.108:45322"
 
   # sensor hosts
-  mocap_host: "192.168.0.108"
+  mocap_host: "192.168.0.120"
 
   # exchanges
   artificial_agent: "artificial-agent"
