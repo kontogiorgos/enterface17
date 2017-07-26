@@ -69,21 +69,27 @@ class MessageQueue(object):
     def get_shifted_time(self):
         return time.time() + self.time_offset
 
-    def bind_queue(self, exchange='', routing_key='', callback=None, no_time=False, queue_name=None):
+    def bind_queue(self, exchange='', routing_key='', callback=None, no_time=False, queue_name=None, callback_wrapper_func=None):
         result = self.channel.queue_declare(exclusive=True)
         if not queue_name:
             queue_name = result.method.queue
         self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
+        self.channel.basic_qos(prefetch_count=50)
 
-        def callback_wrapper(ch, method, properties, body):
-            if type(body) == bytes:
-            	body = body.decode("utf-8")
-            msg = json.loads(body)
-            if not no_time:
-                self.timestamp(msg, 'arrived')
-            callback(self, self.get_shifted_time, method.routing_key, msg)
+        if not callback_wrapper_func:
+            def callback_wrapper(ch, method, properties, body):
+                if type(body) == bytes:
+                    body = body.decode("utf-8")
+                msg = json.loads(body)
+                if not no_time:
+                    self.timestamp(msg, 'arrived')
+                callback(self, self.get_shifted_time, method.routing_key, msg)
+            callback_wrapper_func = callback_wrapper
 
-        self.channel.basic_consume(callback_wrapper, queue=queue_name)
+        self.channel.basic_consume(callback_wrapper_func, queue=queue_name)
+
+    def disconnect(self, routing_key):
+        self.publish(exchange=self.settings['messaging']['sensors'], routing_key=routing_key, body={})
 
     def stop(self):
         self.channel.stop_consuming()
