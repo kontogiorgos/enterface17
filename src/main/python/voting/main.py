@@ -23,8 +23,8 @@ def vote():
     if participant:
         mq.publish(
             exchange=settings['messaging']['environment'],
-            routing_key='action.vote',
-            body={'participant': request.args.get('participant', ''),
+            routing_key='action.vote.{}'.format(participant),
+            body={'participant': participant,
                   'last_vote': request.args.get('vote_for', '')},
             no_time=True
         )

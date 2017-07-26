@@ -8,6 +8,7 @@ from FAtiMA import DecisionMaking
 sys.path.append('../..')
 from shared import MessageQueue
 from threading import Thread
+import operator,json
 
 
 HOST = '192.168.0.100'
@@ -43,7 +44,10 @@ class Environment(object):
             raise IOError("An error has occurred while trying to load settings file.")
 
     def get_participant(self, participant_name):
-       return [x for x in self.participants if x.name == participant_name][0]
+        try:
+            return [x for x in self.participants if x.name == participant_name][0]
+        except:
+            return ''
 
     def get_participants(self):
         return self.participants
@@ -69,34 +73,47 @@ class Environment(object):
 #        print('started ')
 
         def event_handler(_mq, get_shifted_time, routing_key, body):
-            action = routing_key.rsplit('.', 1)[1]
+            action = routing_key.rsplit('.')[1]
             msg = body
             participant = self.get_participant(msg['participant'])
 
-            if action == 'vote':
-                participant.last_vote = msg['last_vote']
-                self.fatima.update_vote(participant)
+            if participant != '':
 
-            if action == 'speech_active':
-                if participant not in self.speaking_queue:
-                    self.speaking_queue.append(participant)
-                if self.get_participant('red').gaze != self.speaking_queue[0]:
-                    self.get_participant('red').gaze = self.speaking_queue[0]
-                    self.gaze_at(self.speaking_queue[0].get_furhat_angle())
+                if action == 'vote':
+                    participant.last_vote = msg['last_vote']
+                    self.fatima.update_vote(participant)
 
-            if action == 'end_of_speech':
-                if participant in self.speaking_queue:
-                    self.speaking_queue.remove(participant)
-                if self.speaking_queue:
-                    if self.speaking_queue[0] != self.get_participant('red').gaze:
+                if action == 'speech_active':
+                    if participant not in self.speaking_queue:
+                        self.speaking_queue.append(participant)
+                    if self.get_participant('red').gaze != self.speaking_queue[0]:
                         self.get_participant('red').gaze = self.speaking_queue[0]
                         self.gaze_at(self.speaking_queue[0].get_furhat_angle())
-                else:
-                    self.gaze_at({'x':0,'y':0,'z':1})
-                    self.get_participant('red').gaze = {'x':0,'y':0,'z':1}
+
+                if action == 'end_of_speech':
+                    if participant in self.speaking_queue:
+                        self.speaking_queue.remove(participant)
+                    if self.speaking_queue:
+                        if self.speaking_queue[0] != self.get_participant('red').gaze:
+                            self.get_participant('red').gaze = self.speaking_queue[0]
+                            self.gaze_at(self.speaking_queue[0].get_furhat_angle())
+                    else:
+                        self.gaze_at({'x':0,'y':0,'z':1})
+                        self.get_participant('red').gaze = {'x':0,'y':0,'z':1}
+                    if len(self.speaking_queue) == 0:
+                        print('everybody is quiet')
+                        self.update_accusal_data()
+
+                if action == 'dialogue_act':
+                    participant,dialogue_act,target = self.process_dialog_acts(msg['participant'],msg['dialogue-acts'])
+                    if target != '':
+                        self.fatima.action_event(participant,dialogue_act,target)
+            else:
+                print('no participant specificied')
+
 
         mq.bind_queue(
-            exchange=self.settings['messaging']['environment'], routing_key='action.*', callback=event_handler
+            exchange=self.settings['messaging']['environment'], routing_key='action.*.*', callback=event_handler
         )
 
         print('[*] Waiting for environment messages. To exit press CTRL+C')
@@ -115,6 +132,24 @@ class Environment(object):
     def start_game(self, game=None):
         self.game = game if game and isinstance(game, Game) else Game(Environment.SETTINGS_FILE)
 
+    def process_dialog_acts(self,participant,dialogue_acts):
+        '''
+        get the most likely dialogue act if there is one
+        otherwise returns -1
+
+        :param participant:
+        :param dialogue_acts:
+        :return:
+        '''
+        for dialogue_act in dialogue_acts:
+            most_likely_da = max(dialogue_acts[dialogue_act].items(), key=operator.itemgetter(1))
+            if len(most_likely_da) == 1:
+                print(participant,dialogue_act,max(most_likely_da)[0])
+                return participant,dialogue_act,max(most_likely_da)[0]
+            else:
+                return participant,dialogue_act,''
+
+        return participant,'',''
 
 
  #   def _init_subscription(self):

@@ -40,10 +40,10 @@ class DecisionMaking:
 
 	def get_accusals(self):
 		# toy examples to check that it is actually running
-		self.property_change('GazeMostAt(Blue)', 'Red')
-		self.property_change('GazeMostAt(Red)', 'Blue')
-		self.property_change('IsDead(Blue)', 'false')
-		self.property_change('IsDead(Red)', 'false')
+		#self.property_change('GazeMostAt(Blue)', 'Red')
+		#self.property_change('GazeMostAt(Red)', 'Blue')
+		#self.property_change('IsDead(Blue)', 'false')
+		#self.property_change('IsDead(Red)', 'false')
 		# getting resulting acts
 		accusals = Counter([str(d.Target) for d in self.rpc.Decide()])
 		if len(accusals) > 0:
@@ -54,6 +54,7 @@ class DecisionMaking:
 			return ("No accusals")
 
 	def update_vote(self, player):
+		print(player.name,'vote',player.last_vote)
 		self.action_event(player.name, "vote", player.last_vote)
 
 	def update_knowledge_base(self, timestep, player):

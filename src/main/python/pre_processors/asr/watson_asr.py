@@ -15,9 +15,9 @@ from shared import MessageQueue
 import urllib.parse
 
 
-DEBUG = False
+DEBUG = True
 
-with open('.watson_credentials.json') as f:
+with open('watson_credentials.json') as f:
     credentials = json.loads(f.read())
 if not credentials:
     exit('no credentials')

@@ -32,17 +32,12 @@ class Agent(object):
         self.thread.deamon = True
         self.thread.start()
         self.fatima_mq = MessageQueue('fatima_agent')
-
         self.gaze_at({'x':0,'y':0,'z':1})
+        self.prompts_dict = self.load_prompts()
 
 
-    def listen_to_wizard_events(self):
-        mq = MessageQueue('wizard_listener')
-
-        #getting system prompts
+    def load_prompts(self):
         prompts_dict = {}
-        spoken_prompt_list = []
-
         for root,dir,files in os.walk(os.path.join(self.FURHAT_HOME,'NLG/wizard/')):
             for file in files:
                 if file.endswith('.prompts'):
@@ -55,21 +50,29 @@ class Agent(object):
                                 prompts_dict[file.split('.prompts')[0]].append(row[1])
                             except:
                                 print(row)
+        return prompts_dict
 
-        def get_prompt(action, prompts_dict, participant=None):
+
+    def listen_to_wizard_events(self):
+        mq = MessageQueue('wizard_listener')
+
+        #getting system prompts
+        spoken_prompt_list = []
+
+        def get_prompt(action, participant=None):
 
             if participant == 'general' and action != 'accuse':
-                selected_prompt = random.choice(prompts_dict['%s.general' % action])
+                selected_prompt = random.choice(self.prompts_dict['%s.general' % action])
                 while selected_prompt in spoken_prompt_list:
-                    selected_prompt = random.choice(prompts_dict['%s.general' % action])
+                    selected_prompt = random.choice(self.prompts_dict['%s.general' % action])
             elif participant == 'self':
-                selected_prompt = random.choice(prompts_dict['%s.self' % action])
+                selected_prompt = random.choice(self.prompts_dict['%s.self' % action])
                 while selected_prompt in spoken_prompt_list:
-                    selected_prompt = random.choice(prompts_dict['%s.self' % action])
+                    selected_prompt = random.choice(self.prompts_dict['%s.self' % action])
             else:
-                selected_prompt = re.sub('<user_id>', participant, random.choice(prompts_dict['%s.user' % action]))
+                selected_prompt = re.sub('<user_id>', participant, random.choice(self.prompts_dict['%s.user' % action]))
                 while selected_prompt in spoken_prompt_list:
-                    selected_prompt = re.sub('<user_id>', participant, random.choice(prompts_dict['%s.user' % action]))
+                    selected_prompt = re.sub('<user_id>', participant, random.choice(self.prompts_dict['%s.user' % action]))
 
             try:
                 return selected_prompt
@@ -79,13 +82,14 @@ class Agent(object):
 
         def get_prompt_action(action):
 
-            selected_prompt = random.choice(prompts_dict['%s'%action])
+            selected_prompt = random.choice(self.prompts_dict['%s'%action])
             while selected_prompt in spoken_prompt_list:
-                selected_prompt = random.choice(prompts_dict['%s'%action])
+                selected_prompt = random.choice(self.prompts_dict['%s'%action])
             return selected_prompt
 
         # Callback for wizard events. map to furhat actions
         def callback(_mq, get_shifted_time, routing_key, body):
+            #print(routing_key)
             action = routing_key.rsplit('.', 1)[1]
             msg = body
             furhat_class = self.environment.get_participant('red')
@@ -95,15 +99,16 @@ class Agent(object):
                 self.gesture(msg['gesture_name'])
             if action == 'accuse':
                 if msg['participant'] != 'general':
-                    if get_prompt(action,prompts_dict,msg['participant']):
-                        self.say(get_prompt(action,prompts_dict,msg['participant']))
+                    if get_prompt(action,msg['participant']):
+                        self.say(get_prompt(action,msg['participant']))
                         addressee = self.environment.get_participant(msg['participant'])
                         furhat_class.gaze = addressee.get_furhat_angle()
                         #location = addressee
                         self.gaze_at(furhat_class.gaze)
 
             if action == 'defend':
-                defend_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                defend_prompt = get_prompt(action,msg['participant'])
+                print(msg['participant'])
                 if defend_prompt:
                     spoken_prompt_list.append(defend_prompt)
                     self.say(defend_prompt)
@@ -115,7 +120,7 @@ class Agent(object):
                         self.gaze_at(furhat_class.gaze)
 
             if action == 'support':
-                support_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                support_prompt = get_prompt(action,msg['participant'])
                 if support_prompt:
                     spoken_prompt_list.append(support_prompt)
                     self.say(support_prompt)
@@ -127,7 +132,7 @@ class Agent(object):
                     self.gaze_at(furhat_class.gaze)
 
             if action == 'vote':
-                vote_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                vote_prompt = get_prompt(action,msg['participant'])
                 if vote_prompt:
                     spoken_prompt_list.append(vote_prompt)
                     self.say(vote_prompt)
@@ -135,7 +140,7 @@ class Agent(object):
                     self.gaze_at(furhat_class.gaze)
 
             if action == 'small_talk':
-                small_talk_prompt = get_prompt(action,prompts_dict,msg['participant'])
+                small_talk_prompt = get_prompt(action,msg['participant'])
                 if small_talk_prompt:
                     spoken_prompt_list.append(small_talk_prompt)
                     self.say(small_talk_prompt)
