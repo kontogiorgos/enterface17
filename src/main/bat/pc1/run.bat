@@ -1,6 +1,9 @@
 REM start kinect sensor
 START CMD /K CALL "run_kinect_sensor.bat"
 
+REM start kinect sensor
+START CMD /K CALL "run_keywordspotter.bat"
+
 REM start kinect screenreader hack
 REM START CMD /K CALL "../screenreader_hack.bat"
 
