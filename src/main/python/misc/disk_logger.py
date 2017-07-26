@@ -34,7 +34,7 @@ log_path = os.path.join(settings['logging']['sensor_path'], session_name)
 
 
 
-q = queue.Queue()
+
 
 os.mkdir(log_path)
 shutil.copy(os.path.join('..', 'settings.yaml'), os.path.join(log_path, 'settings.yaml'))
@@ -47,6 +47,7 @@ def callback(mq, get_shifted_time, routing_key, body):
 
     a = 0
     go_on = True
+    q = queue.Queue()
 
     while go_on:
         try:
