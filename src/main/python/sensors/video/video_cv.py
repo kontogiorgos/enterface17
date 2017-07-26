@@ -78,8 +78,8 @@ mq.publish(
         'address': zmq_server_addr,
         'file_type': 'cv-video',
         'img_size': {
-            'width': width,
-            'height': height,
+            'width': width / 2,
+            'height': height / 2,
             'channels': 3,
             'fps': 30,
         }
@@ -93,5 +93,6 @@ try:
         zmq_socket.send(msgpack.packb((scipy.ndimage.zoom(frame, (0.5, 0.5, 1), order=0).flatten().tobytes(), time.time())))
 
 except KeyboardInterrupt:
+    mq.disconnect('video.disconnected_sensor.{}'.format(participant))
     zmq_socket.send(b'CLOSE')
     zmq_socket.close()
