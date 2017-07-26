@@ -67,7 +67,7 @@ logging:
 
 messaging:
 
-  broker_host: "192.168.0.110"
+  broker_host: "192.168.0.120"
   broker_port: 5672
   broker_user: "test"
   broker_pass: "test"
@@ -77,10 +77,10 @@ messaging:
   # broker_pass: "guest"
 
   # time server host
-  time_server_host: "tcp://192.168.0.110:45321"
+  time_server_host: "tcp://192.168.0.120:45321"
 
   # connection server
-  connection_server_host: "tcp://192.168.0.110:45322"
+  connection_server_host: "tcp://192.168.0.120:45322"
 
   # sensor hosts
   mocap_host: "192.168.0.120"
