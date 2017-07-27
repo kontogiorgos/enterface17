@@ -10,9 +10,9 @@ import sys
 import wave
 import datetime
 
-# if len(sys.argv) != 2:
-#     exit('please only supply sound card name')
-device_names_string = 'red-blue'
+if len(sys.argv) != 2:
+    exit('please only supply sound card name')
+device_names_string = sys.argv[1]
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
@@ -25,16 +25,16 @@ zmq_socket_2, zmq_server_addr_2 = create_zmq_server()
 mq = MessageQueue('microphone-sensor')
 
 p = pyaudio.PyAudio()
-device_index = 0
-# for i in range(p.get_device_count()):
-#     device = p.get_device_info_by_index(i)
-#     if device['name'].startswith('[{}]'.format(device_names_string)):
-#         device_index = i
+device_index = None
+for i in range(p.get_device_count()):
+    device = p.get_device_info_by_index(i)
+    if device['name'].startswith('[{}]'.format(device_names_string)):
+        device_index = i
 
-# if not device_index:
-#     exit('please connect a proper soundcard')
+if not device_index:
+    exit('please connect a proper soundcard')
 
-device_names = ['red', 'blue']
+device_names = device_names_string.split(',')
 
 mq.publish(
     exchange='sensors',
