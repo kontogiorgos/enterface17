@@ -22,7 +22,7 @@ mq.publish(
 )
 
 def my_callback(data):
-    zmq_socket.send(msgpack.packb((data, time.time())))
+    zmq_socket.send(msgpack.packb((data, mq.get_shifted_time())))
 
 gc = GazeSenseSub(callback=my_callback, verbose=True)
 

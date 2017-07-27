@@ -47,7 +47,7 @@ try:
 
         if stdout_line == 'Waiting for new frame...\n':
             if DEBUG: print(frame)
-            zmq_socket.send(msgpack.packb((frame, time.time())))
+            zmq_socket.send(msgpack.packb((frame, mq.get_shifted_time())))
             frame = []
 
 finally:
