@@ -12,7 +12,7 @@ import time
 import threading
 import socket
 
-GLASSES_IP = "192.168.0.113"  # IPv4 address
+GLASSES_IP = "10.46.16.86"  # IPv4 address
 PORT = 49152
 base_url = 'http://' + GLASSES_IP
 timeout = 1
@@ -118,7 +118,6 @@ if __name__ == "__main__":
 
         project_id = create_project()
         participant_id = create_participant(project_id)
-        print participant_id
         calibration_id = create_calibration(project_id, participant_id)
 
         print "Project: " + project_id, ", Participant: ", participant_id, ", Calibration: ", calibration_id, " "

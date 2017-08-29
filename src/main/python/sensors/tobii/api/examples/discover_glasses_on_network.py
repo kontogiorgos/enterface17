@@ -2,7 +2,7 @@
     Example for how to send and receive discovery info from glasses on network.
 
     Note: This example program is tested with Python 2.7 on Ubuntu 12.04 LTS (precise),
-          Ubuntu 14.04 LTS (trusty), and Windows 8.
+          Ubuntu 14.04 LTS (trusty), and Windows 8. 
 '''
 import socket
 import struct
