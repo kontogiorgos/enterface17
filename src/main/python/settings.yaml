@@ -63,12 +63,12 @@ file_storage:
 
 logging:
   asr_path: 'E:\logging\asr'
-  sensor_path: 'E:\logging\sensor'
+  sensor_path: 'C:\Users\kalins\Documents\Data\enterface_branch'
 
 messaging:
 
-  broker_host: "192.168.0.111"
-  #broker_host: "130.237.67.194"
+  #broker_host: "192.168.0.111"
+  broker_host: "130.237.67.194"
   broker_port: 5672
   broker_user: "test"
   broker_pass: "test"
