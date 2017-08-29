@@ -8,7 +8,7 @@ import datetime
 import yaml
 import os
 from threading import Thread
-import Queue
+import queue
 import json
 import time
 import shutil
@@ -29,10 +29,6 @@ settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 session_name = datetime.datetime.now().isoformat().replace('.', '_').replace(':', '_')
 
 log_path = os.path.join(settings['logging']['sensor_path'], session_name)
-
-
-
-
 
 
 
