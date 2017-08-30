@@ -1,14 +1,11 @@
 +Git pull
 +RabbitMQ
 +Timeserver
--Watson
 +Logging of sensors
-MoCap processor + REC
-(Kinect distribution)
-(OpenFace)
-(Kinect Entropy)
-KeyWord processor
-Position processor (MoCap)
+-Watson
+-Mocap processor
+-KeyWord processor
+-Mocap position processor
 Message logger
 Furhat logger
 Wizard
