@@ -16,7 +16,7 @@ SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
 # Print messages
-DEBUG = True
+DEBUG = False
 
 # Dictionaries
 tobii_dict = defaultdict(lambda : defaultdict(dict))
@@ -50,10 +50,10 @@ def callback(_mq, get_shifted_time, routing_key, body):
             name = 'glasses3'
             pname = 'brown'
         timestamp = None
-        pdleft = None
-        pdright = None
-        gdleft = None
-        gdright = None
+        # pdleft = None
+        # pdright = None
+        # gdleft = None
+        # gdright = None
         gp = None
         gp3 = None
 
@@ -77,32 +77,32 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 if DEBUG: print "Timestamp: ", timestamp
 
             # Get pupil diameter
-            r1 = re.search('"pd":(.*)', msgdata)
-            if r1:
-                r1a = re.search('"eye":"left"', msgdata)
-                r1b = re.search('"eye":"right"', msgdata)
-                if r1a:
-                    pdleft = r1.group(1)
-                    pdleft = pdleft.split(',')[0]
-                    if DEBUG: print "PD Left: ", pdleft
-                if r1b:
-                    pdright = r1.group(1)
-                    pdright = pdright.split(',')[0]
-                    if DEBUG: print "PD Right: ", pdright
+            # r1 = re.search('"pd":(.*)', msgdata)
+            # if r1:
+            #     r1a = re.search('"eye":"left"', msgdata)
+            #     r1b = re.search('"eye":"right"', msgdata)
+            #     if r1a:
+            #         pdleft = r1.group(1)
+            #         pdleft = pdleft.split(',')[0]
+            #         if DEBUG: print "PD Left: ", pdleft
+            #     if r1b:
+            #         pdright = r1.group(1)
+            #         pdright = pdright.split(',')[0]
+            #         if DEBUG: print "PD Right: ", pdright
 
             # Get gaze direction
-            r2 = re.search('"gd":(.*)', msgdata)
-            if r2:
-                r2a = re.search('"eye":"left"', msgdata)
-                r2b = re.search('"eye":"right"', msgdata)
-                if r2a:
-                    gdleft = r2.group(1)
-                    gdleft = gdleft.split(',')[0] + "," + gdleft.split(',')[1] + "," + gdleft.split(',')[2]
-                    if DEBUG: print "GD Left: ", gdleft
-                if r2b:
-                    gdright = r2.group(1)
-                    gdright = gdright.split(',')[0] + "," + gdright.split(',')[1] + "," + gdright.split(',')[2]
-                    if DEBUG: print "GD Right: ", gdright
+            # r2 = re.search('"gd":(.*)', msgdata)
+            # if r2:
+            #     r2a = re.search('"eye":"left"', msgdata)
+            #     r2b = re.search('"eye":"right"', msgdata)
+            #     if r2a:
+            #         gdleft = r2.group(1)
+            #         gdleft = gdleft.split(',')[0] + "," + gdleft.split(',')[1] + "," + gdleft.split(',')[2]
+            #         if DEBUG: print "GD Left: ", gdleft
+            #     if r2b:
+            #         gdright = r2.group(1)
+            #         gdright = gdright.split(',')[0] + "," + gdright.split(',')[1] + "," + gdright.split(',')[2]
+            #         if DEBUG: print "GD Right: ", gdright
 
             # Get gaze position
             r3 = re.search('"gp":(.*)', msgdata)
@@ -124,83 +124,45 @@ def callback(_mq, get_shifted_time, routing_key, body):
             tobii_dict[pname]['participant'] = pname
             tobii_dict[pname]['object'] = name
             tobii_dict[pname]['timestamp'] = timestamp
-            tobii_dict[pname]['pdleft'] = pdleft
-            tobii_dict[pname]['pdright'] = pdright
-            tobii_dict[pname]['gdleft'] = gdleft
-            tobii_dict[pname]['gdright'] = gdright
+            # tobii_dict[pname]['pdleft'] = pdleft
+            # tobii_dict[pname]['pdright'] = pdright
+            # tobii_dict[pname]['gdleft'] = gdleft
+            # tobii_dict[pname]['gdright'] = gdright
             tobii_dict[pname]['gp'] = gp
             tobii_dict[pname]['gp3'] = gp3
 
-            print(tobii_dict)
-            key = settings['messaging']['tobii_processing']
-            new_routing_key = "{key}.{participant}".format(key=key, participant=pname)
-            _mq.publish(exchange='pre-processor', routing_key=new_routing_key, body=tobii_dict)
+            # Send processed data
+            def sendjson(participantname):
+                # Parse coordinates to float
+                def coordtofloat2d(coord):
+                    if coord and coord != '0':
+                        x, y = map(float, coord[1:][:-1].split(","))
+                        return {"x": x, "y": y}
+                    else:
+                        return None
+                def coordtofloat3d(coord):
+                    if coord and coord != '0':
+                        x, y, z = map(float, coord[1:][:-1].split(","))
+                        return {"x": x, "y": y, "z": z}
+                    else:
+                        return None
 
-            # # Send processed data
-            # r10 = re.search('Waiting for new frame...', msgdata)
-            # if r10 and all(mocap_dict[pname].values()):
-            #     # Send one by one the participant json files
-            #     def sendjson(participantname):
-            #         # Parse coordinates to float
-            #         def poscoordtofloat(coord):
-            #             if coord and coord != '0':
-            #                 x, y, z = map(float, coord[1:][:-1].split(", "))
-            #                 return {"x": x, "y": y, "z": z}
-            #             else:
-            #                 return None
-            #         def rotcoordtofloat(coord):
-            #             if coord and coord != '0':
-            #                 x, y, z, w = map(float, coord[1:][:-1].split(", "))
-            #                 return {"x": x, "y": y, "z": z, "w": w}
-            #             else:
-            #                 return None
-            #
-            #         json_data = {
-            #             "frame": frame,
-            #             "participant": mocap_dict[participantname]['participant'],
-            #             "coord": "xyz_left",
-            #             "head": {
-            #                 "type": mocap_dict[participantname]['type'],
-            #                 "name":  mocap_dict[participantname]['object'],
-            #                 "position": poscoordtofloat(mocap_dict[participantname]['position']),
-            #                 "rotation": rotcoordtofloat(mocap_dict[participantname]['rotation']),
-            #                 "markers":
-            #                 [
-            #                     {
-            #                         "name": mocap_dict[participantname]['marker0name'],
-            #                         "position": poscoordtofloat(mocap_dict[participantname]['marker0pos'])
-            #                     },
-            #                     {
-            #                         "name": mocap_dict[participantname]['marker1name'],
-            #                         "position": poscoordtofloat(mocap_dict[participantname]['marker1pos'])
-            #                     },
-            #                     {
-            #                         "name": mocap_dict[participantname]['marker2name'],
-            #                         "position": poscoordtofloat(mocap_dict[participantname]['marker2pos'])
-            #                     },
-            #                     {
-            #                         "name": mocap_dict[participantname]['marker3name'],
-            #                         "position": poscoordtofloat(mocap_dict[participantname]['marker3pos'])
-            #                     }
-            #                 ]
-            #             },
-            #             "glove_left": {},
-            #             "glove_right": {}
-            #         }
-            #
-            #         key = settings['messaging']['mocap_processing']
-            #         new_routing_key = "{key}.{participant}".format(key=key, participant=participantname)
-            #         _mq.publish(exchange='pre-processor', routing_key=new_routing_key, body=json_data)
-            #
-            #         return;
-            #
-            #     # Send for every participant
-            #     sendjson('white')
-            #     sendjson('pink')
-            #     sendjson('blue')
-            #     sendjson('orange')
-            #     sendjson('brown')
-            #     sendjson('black')
+                json_data = {
+                    "participant": tobii_dict[pname]['participant'],
+                    "name":  tobii_dict[pname]['object'],
+                    "timestamp":  tobii_dict[pname]['timestamp'],
+                    "gp": coordtofloat2d(tobii_dict[pname]['gp']),
+                    "gp3": coordtofloat3d(tobii_dict[pname]['gp3'])
+                }
+
+                key = settings['messaging']['tobii_processing']
+                new_routing_key = "{key}.{participant}".format(key=key, participant=pname)
+                _mq.publish(exchange='pre-processor', routing_key=new_routing_key, body=json_data)
+
+                return;
+
+            # Send for every participant
+            sendjson(pname)
         s.close()
     participant = routing_key.rsplit('.', 1)[1]
     thread = Thread(target = run, args=(participant, _mq))
@@ -208,8 +170,6 @@ def callback(_mq, get_shifted_time, routing_key, body):
     thread.start()
 
 mq = MessageQueue('tobii-preprocessor')
-
-#routing_key = '{}.{}'.format(settings['messaging']['new_sensor_tobii'], participant)
 
 mq.bind_queue(exchange='sensors', routing_key="{}.*".format(settings['messaging']['new_sensor_tobii']), callback=callback)
 

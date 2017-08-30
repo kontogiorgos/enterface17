@@ -72,10 +72,6 @@ messaging:
   broker_port: 5672
   broker_user: "test"
   broker_pass: "test"
-  # broker_host: "localhost"
-  # broker_port: 32777
-  # broker_user: "guest"
-  # broker_pass: "guest"
 
   # time server host
   time_server_host: "tcp://130.237.67.194:45321"

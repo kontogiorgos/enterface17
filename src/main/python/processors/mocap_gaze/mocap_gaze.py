@@ -19,7 +19,7 @@ def callback(_mq, get_shifted_time, routing_key, body):
     print(body)
     print("-------------------------------------------------")
 
-mq = MessageQueue('mocap-gaze-processor')
+mq = MessageQueue('mocaptobii_processing')
 
 #mq.bind_queue(exchange='pre-processor', routing_key="{}.*".format(settings['messaging']['mocap_processing']), callback=callback)
 mq.bind_queue(exchange='pre-processor', routing_key="{}.*".format(settings['messaging']['tobii_processing']), callback=callback)
