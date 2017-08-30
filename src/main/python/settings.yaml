@@ -107,10 +107,11 @@ messaging:
 
   # pre_processing
   mocap_processing: "mocap.processing"
+  tobii_processing: "tobii.processing"
   openface: "openface"
 
   #processors
-  tobii_processing: "tobii.processing"
+  mocaptobii_processing: "mocaptobii.processing"
   position_data: "position.data"
   asr_watson: "asr.data"
   dialogue_acts : "dialogue_act.data"

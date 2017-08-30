@@ -22,13 +22,10 @@ DEBUG = True
 tobii_dict = defaultdict(lambda : defaultdict(dict))
 # white = glasses1
 tobii_dict['white']['type'] = 'glasses1'
-# pink = kinnect1
 # blue = glasses2
 tobii_dict['blue']['type'] = 'glasses2'
-# orange = kinnect2
 # brown = glasses3
 tobii_dict['brown']['type'] = 'glasses3'
-# black = kinnect3
 
 # Procees input data
 def callback(_mq, get_shifted_time, routing_key, body):
@@ -41,24 +38,24 @@ def callback(_mq, get_shifted_time, routing_key, body):
         s.connect(body.get('address'))
 
         # Initiate parameters
-        # frame = None
-        # objects = None
-        # name = None
-        # pname = None
-        # position = None
-        # rotation = None
-        # marker0 = None
-        # marker0name = None
-        # marker0pos = None
-        # marker1 = None
-        # marker1name = None
-        # marker1pos = None
-        # marker2 = None
-        # marker2name = None
-        # marker2pos = None
-        # marker3 = None
-        # marker3name = None
-        # marker3pos = None
+        name = None
+        pname = None
+        if routing_key == "tobii.new_sensor.white":
+            name = 'glasses1'
+            pname = 'white'
+        elif routing_key == "tobii.new_sensor.blue":
+            name = 'glasses2'
+            pname = 'blue'
+        elif routing_key == "tobii.new_sensor.brown":
+            name = 'glasses3'
+            pname = 'brown'
+        timestamp = None
+        pdleft = None
+        pdright = None
+        gdleft = None
+        gdright = None
+        gp = None
+        gp3 = None
 
         while True:
             data = s.recv()
@@ -68,6 +65,10 @@ def callback(_mq, get_shifted_time, routing_key, body):
             msgdata, timestamp = msgpack.unpackb(data, use_list=False)
 
             if DEBUG: print "----------------------------------------------------------------"
+
+            # Convert tuple to string
+            msgdata = str(msgdata)
+
             # Get timestamp
             r0 = re.search('"ts":(.*)', msgdata)
             if r0:
@@ -119,15 +120,21 @@ def callback(_mq, get_shifted_time, routing_key, body):
                 gp3 = gp3.split('}')[0]
                 if DEBUG: print "GP3: ", gp3
 
-            # # Put values on a dictionary
-            # mocap_dict[pname]['participant'] = pname
-            # mocap_dict[pname]['object'] = name
-            # mocap_dict[pname]['position'] = position
-            # mocap_dict[pname]['rotation'] = rotation
-            # mocap_dict[pname]['marker0'] = marker0
-            # mocap_dict[pname]['marker1'] = marker1
-            # mocap_dict[pname]['marker2'] = marker2
-            # mocap_dict[pname]['marker3'] = marker3
+            # Put values on a dictionary
+            tobii_dict[pname]['participant'] = pname
+            tobii_dict[pname]['object'] = name
+            tobii_dict[pname]['timestamp'] = timestamp
+            tobii_dict[pname]['pdleft'] = pdleft
+            tobii_dict[pname]['pdright'] = pdright
+            tobii_dict[pname]['gdleft'] = gdleft
+            tobii_dict[pname]['gdright'] = gdright
+            tobii_dict[pname]['gp'] = gp
+            tobii_dict[pname]['gp3'] = gp3
+
+            print(tobii_dict)
+            key = settings['messaging']['tobii_processing']
+            new_routing_key = "{key}.{participant}".format(key=key, participant=pname)
+            _mq.publish(exchange='pre-processor', routing_key=new_routing_key, body=tobii_dict)
 
             # # Send processed data
             # r10 = re.search('Waiting for new frame...', msgdata)

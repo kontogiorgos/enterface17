@@ -3,19 +3,13 @@
 +Timeserver
 +Logging of sensors
 -Watson
--Mocap processor
+-Mocap-gaze processor
 -KeyWord processor
 -Mocap position processor
-Message logger
-Furhat logger
-Wizard
-Game
-Environment
-Voting
-(Face processor)
-Microphone x5 batscript
-Kinect sensor x3 batscript
-ZED
-Webcam x3
-TOBII x3
-MoCap
+-Message logger
+-Furhat logger
+-Mocap pre-processor
+Tobii pre-processor
+-Microphone x3
+-Mocap sensor
++Tobii sensor x3
