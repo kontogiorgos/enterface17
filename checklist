@@ -1,8 +1,8 @@
-Git pull
-RabbitMQ
-Timeserver
---Watson
-Logging of sensors
++Git pull
++RabbitMQ
++Timeserver
+-Watson
++Logging of sensors
 MoCap processor + REC
 (Kinect distribution)
 (OpenFace)
