@@ -13,6 +13,8 @@ import yaml
 SETTINGS_FILE = '../../settings.yaml'
 settings = yaml.safe_load(open(SETTINGS_FILE, 'r').read())
 
+# Get access to tobii live video streaming: rtsp://130.237.67.195:8554/live/eyes or scene
+
 # Procees input data
 def callback(_mq, get_shifted_time, routing_key, body):
     #json.load

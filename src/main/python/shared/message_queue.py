@@ -74,7 +74,7 @@ class MessageQueue(object):
         if not queue_name:
             queue_name = result.method.queue
         self.channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
-        self.channel.basic_qos(prefetch_count=50)
+        #self.channel.basic_qos(prefetch_count=50)
 
         if not callback_wrapper_func:
             def callback_wrapper(ch, method, properties, body):
