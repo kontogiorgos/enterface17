@@ -3,7 +3,7 @@ Flask==0.12.2
 Flask-SocketIO==2.9.1
 Furhat-client==0.1
 itsdangerous==0.24
-Jinja2==2.9.6
+Jinja2==2.11.3
 MarkupSafe==1.0
 msgpack-python==0.4.8
 numpy==1.13.1
