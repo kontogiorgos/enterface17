@@ -43,7 +43,7 @@ pysolr==3.6.0
 PyYAML==3.12
 pyzmq==16.0.2
 requests==2.18.1
-rsa==3.4.2
+rsa==4.7
 service-identity==17.0.0
 six==1.10.0
 stt-watson==1.0.3
