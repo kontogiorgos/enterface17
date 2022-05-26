@@ -47,7 +47,7 @@ rsa==3.4.2
 service-identity==17.0.0
 six==1.10.0
 stt-watson==1.0.3
-Twisted==17.5.0
+Twisted==22.4.0
 txaio==2.8.0
 urllib3==1.21.1
 watson-developer-cloud==0.26.1
