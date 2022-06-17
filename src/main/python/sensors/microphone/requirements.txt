@@ -28,7 +28,7 @@ idna==2.5
 incremental==17.5.0
 jsocket==1.6
 msgpack-python==0.4.8
-numpy==1.13.1
+numpy==1.21.0
 oauth2client==3.0.0
 pika==0.10.0
 ply==3.8
