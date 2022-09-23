@@ -33,7 +33,7 @@ oauth2client==3.0.0
 pika==0.10.0
 ply==3.8
 proto-google-cloud-speech-v1==0.15.3
-protobuf==3.3.0
+protobuf==3.18.3
 pyasn1==0.2.3
 pyasn1-modules==0.0.9
 pycparser==2.18
